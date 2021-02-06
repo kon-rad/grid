@@ -18,9 +18,10 @@ class LoginViewController: UIViewController {
         
         Auth.auth().addStateDidChangeListener() { auth, user in
           if user != nil {
-            self.performSegue(withIdentifier: "geoSite", sender: nil)
+            print("user is not nil", user?.email)
             self.textFieldLoginEmail.text = nil
             self.textFieldLoginPassword.text = nil
+            self.dismiss(animated: true, completion: nil)
           }
         }
     }
@@ -30,11 +31,14 @@ class LoginViewController: UIViewController {
       guard
         let email = textFieldLoginEmail.text,
         let password = textFieldLoginPassword.text,
-        email.count > 0,
-        password.count > 0
+        email.count >= 4,
+        password.count >= 6
         else {
+        print("login touched condition not met", textFieldLoginEmail.text, textFieldLoginPassword.text)
+        
           return
       }
+      print("login touched", email, password)
       
       Auth.auth().signIn(withEmail: email, password: password) { user, error in
         if let error = error, user == nil {
@@ -47,6 +51,9 @@ class LoginViewController: UIViewController {
           self.present(alert, animated: true, completion: nil)
         }
       }
+    }
+    @IBAction func backDidTouch(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func signUpDidTouch(_ sender: AnyObject) {

@@ -34,6 +34,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if mapDataFromFile != nil {
             self.loadExperienceButton.isHidden = false
         }
+        
+        self.hideKeyboardWhenTappedAround()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -331,3 +333,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
 }
 
+// Hides keyboard when tapped around
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
