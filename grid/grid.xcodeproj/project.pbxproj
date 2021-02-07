@@ -15,6 +15,7 @@
 		FA2EBECF25BD0F47006EF41C /* GeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2EBECE25BD0F47006EF41C /* GeoSiteViewController.swift */; };
 		FA2EBEEF25BD113E006EF41C /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2EBEEE25BD113E006EF41C /* Utilities.swift */; };
 		FA319E4625BCD3BF00D943E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */; };
+		FA97062625CF7BF3008DBC72 /* AddGeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */; };
 		FABB115925AAC6050087C794 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FABB115725AAC6050087C794 /* Main.storyboard */; };
 		FABB116025AAC62F0087C794 /* SnapshotAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB115D25AAC62F0087C794 /* SnapshotAnchor.swift */; };
 		FABB116125AAC62F0087C794 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB115E25AAC62F0087C794 /* RoundedButton.swift */; };
@@ -61,6 +62,7 @@
 		FA2EBECE25BD0F47006EF41C /* GeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoSiteViewController.swift; sourceTree = "<group>"; };
 		FA2EBEEE25BD113E006EF41C /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGeoSiteViewController.swift; sourceTree = "<group>"; };
 		FABB115625AAC6050087C794 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		FABB115725AAC6050087C794 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		FABB115D25AAC62F0087C794 /* SnapshotAnchor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotAnchor.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 			children = (
 				FA2EBECE25BD0F47006EF41C /* GeoSiteViewController.swift */,
 				FA10ECED25BD1A8200161290 /* LoginViewController.swift */,
+				FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -463,6 +466,7 @@
 				FA2EBEEF25BD113E006EF41C /* Utilities.swift in Sources */,
 				FABB116025AAC62F0087C794 /* SnapshotAnchor.swift in Sources */,
 				FA10ECEE25BD1A8200161290 /* LoginViewController.swift in Sources */,
+				FA97062625CF7BF3008DBC72 /* AddGeoSiteViewController.swift in Sources */,
 				FA10ECF725BD214200161290 /* User.swift in Sources */,
 				FAF80BCA25A170480098463A /* AppDelegate.swift in Sources */,
 				FABB116225AAC62F0087C794 /* ARUtilities.swift in Sources */,
