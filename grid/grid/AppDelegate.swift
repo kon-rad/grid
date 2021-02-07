@@ -7,11 +7,13 @@
 
 import UIKit
 import Firebase
+import CoreLocation
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    let locationManager = CLLocationManager()
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -39,5 +41,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+}
+
+
+extension AppDelegate: CLLocationManagerDelegate {
+  
+//  func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+//    if region is CLCircularRegion {
+//      handleEvent(for: region)
+//    }
+//  }
+//
+//  func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+//    if region is CLCircularRegion {
+//      handleEvent(for: region)
+//    }
+//  }
 }
 
