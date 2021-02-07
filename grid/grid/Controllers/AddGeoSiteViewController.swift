@@ -7,38 +7,56 @@
 
 import UIKit
 import MapKit
+import Firebase
 
 class AddGeoSiteViewController: UIViewController {
 
     @IBOutlet weak var zoomButton: UIButton!
-    @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var nameTextField: UITextField!
-    @IBOutlet weak var descriptionTextField: UITextField!
+    
+    var user: User!
+    let geoSiteRef = Database.database().reference(withPath: "geo-sites")
+    let userRef = Database.database().reference(withPath: "online")
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        saveButton.isEnabled = false
+        
+        Auth.auth().addStateDidChangeListener { auth, user in
+            guard let user = user else {
+                self.dismiss(animated: true, completion: nil)
+                return
+            }
+            self.user = User(authData: user)
+            let currentUserRef = self.userRef.child(self.user.uid)
+            currentUserRef.setValue(self.user.email)
+            currentUserRef.onDisconnectRemoveValue()
+        }
     }
     
     @IBAction func onCancel(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func onNameTextFieldChange(_ sender: Any) {
-        saveButton.isEnabled = !nameTextField.isEmpty
+    @IBAction func onZoomToLocation(_ sender: Any) {
+        print("onZoomToLocation")
     }
     
-    /*
-    // MARK: - Navigation
+    @IBAction func onSaveTapped(_ sender: Any) {
+        let coordinate = mapView.centerCoordinate
+        let id = NSUUID().uuidString
+        let createdByUser = self.user.email
+        guard let name = nameTextField.text else {
+            return
+        }
+        print("saving name", name)
+        
+        let geoSiteRef = self.geoSiteRef.child(name.lowercased())
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        let geoSiteObjc = GeoSite(name: name, lat: "\(coordinate.latitude)", lon: "\(coordinate.longitude)", id: id, createdByUser: createdByUser)
+        
+        geoSiteRef.setValue(geoSiteObjc.toAnyObject())
+
     }
-    */
-
 }

@@ -52,6 +52,7 @@ class LoginViewController: UIViewController {
         }
       }
     }
+    
     @IBAction func backDidTouch(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }

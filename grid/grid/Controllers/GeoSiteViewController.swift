@@ -30,14 +30,11 @@ class GeoSiteViewController: UIViewController {
         
         mapView.showsUserLocation = true
         
-        // todo: figure out how to zoom on user location
-        print("did ask for auth")
         mapView.zoomToUserLocation()
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        print("view did appear")
         self.renderNavigationBarItems()
         mapView.zoomToUserLocation()
     }
@@ -58,11 +55,12 @@ class GeoSiteViewController: UIViewController {
     }
     
     @objc func addSiteTapped() {
-        print("addSite clicked")
+        let addGeoSiteVC = self.storyboard?.instantiateViewController(withIdentifier: "addGeoSiteVC") as! AddGeoSiteViewController
+        addGeoSiteVC.modalPresentationStyle = .fullScreen
+        self.present(addGeoSiteVC, animated: true, completion: nil)
     }
     
     @objc func logOutTapped() {
-        print("logout tapped")
         do {
             try Auth.auth().signOut()
         } catch {
@@ -77,13 +75,6 @@ class GeoSiteViewController: UIViewController {
         loginVC.modalPresentationStyle = .fullScreen
         self.present(loginVC, animated: true, completion: nil)
     }
-    
-    // Mark: - Location Manager Delegate
-//    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-//        print("location manager did change auth called")
-//        mapView.showsUserLocation = status == .authorizedWhenInUse
-//    }
-//
 }
 
 extension GeoSiteViewController: CLLocationManagerDelegate {

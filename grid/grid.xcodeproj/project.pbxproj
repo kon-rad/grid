@@ -16,6 +16,7 @@
 		FA2EBEEF25BD113E006EF41C /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2EBEEE25BD113E006EF41C /* Utilities.swift */; };
 		FA319E4625BCD3BF00D943E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */; };
 		FA97062625CF7BF3008DBC72 /* AddGeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */; };
+		FA97062B25CF9440008DBC72 /* GeoSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA97062A25CF9440008DBC72 /* GeoSite.swift */; };
 		FABB115925AAC6050087C794 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FABB115725AAC6050087C794 /* Main.storyboard */; };
 		FABB116025AAC62F0087C794 /* SnapshotAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB115D25AAC62F0087C794 /* SnapshotAnchor.swift */; };
 		FABB116125AAC62F0087C794 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB115E25AAC62F0087C794 /* RoundedButton.swift */; };
@@ -63,6 +64,7 @@
 		FA2EBEEE25BD113E006EF41C /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGeoSiteViewController.swift; sourceTree = "<group>"; };
+		FA97062A25CF9440008DBC72 /* GeoSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoSite.swift; sourceTree = "<group>"; };
 		FABB115625AAC6050087C794 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		FABB115725AAC6050087C794 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		FABB115D25AAC62F0087C794 /* SnapshotAnchor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotAnchor.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				FA10ECF625BD214200161290 /* User.swift */,
+				FA97062A25CF9440008DBC72 /* GeoSite.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -471,6 +474,7 @@
 				FAF80BCA25A170480098463A /* AppDelegate.swift in Sources */,
 				FABB116225AAC62F0087C794 /* ARUtilities.swift in Sources */,
 				FABB116125AAC62F0087C794 /* RoundedButton.swift in Sources */,
+				FA97062B25CF9440008DBC72 /* GeoSite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

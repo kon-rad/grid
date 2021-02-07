@@ -72,19 +72,6 @@
                                 <color key="textColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qyJ-4y-qfO">
-                                <rect key="frame" x="20" y="537" width="374" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="moA-Qh-Bc4">
-                                <rect key="frame" x="20" y="508" width="88" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="HtU-EB-bpA">
                                 <rect key="frame" x="0.0" y="183" width="414" height="226"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -98,6 +85,9 @@
                                     <color key="titleColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <color key="titleShadowColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="onZoomToLocation:" destination="YA0-gk-0as" eventType="touchUpInside" id="yvS-UX-7w4"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GKl-q5-6TD">
                                 <rect key="frame" x="351" y="46" width="43" height="36"/>
@@ -107,6 +97,9 @@
                                     <color key="titleColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <color key="titleShadowColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="onSaveTapped:" destination="YA0-gk-0as" eventType="touchUpInside" id="Qi7-5u-ExJ"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7zd-v9-6a3">
                                 <rect key="frame" x="20" y="46" width="61" height="36"/>
@@ -129,10 +122,8 @@
                     </view>
                     <connections>
                         <outlet property="cancelButton" destination="7zd-v9-6a3" id="373-AF-FEW"/>
-                        <outlet property="descriptionTextField" destination="qyJ-4y-qfO" id="1Sl-yg-lir"/>
                         <outlet property="mapView" destination="HtU-EB-bpA" id="4ek-ti-RfV"/>
                         <outlet property="nameTextField" destination="W7y-j2-Rk3" id="IOT-D4-duY"/>
-                        <outlet property="saveButton" destination="GKl-q5-6TD" id="QPS-vr-tDC"/>
                         <outlet property="zoomButton" destination="BG0-8X-JIa" id="LjN-bR-qh8"/>
                     </connections>
                 </viewController>
