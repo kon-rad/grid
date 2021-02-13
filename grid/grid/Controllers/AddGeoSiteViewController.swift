@@ -8,6 +8,7 @@
 import UIKit
 import MapKit
 import Firebase
+import GeoFire
 
 class AddGeoSiteViewController: UIViewController {
 
@@ -53,8 +54,15 @@ class AddGeoSiteViewController: UIViewController {
         print("saving name", name)
         
         let geoSiteRef = self.geoSiteRef.child(name.lowercased())
+        
+        // create Geohash
+        // Compute the GeoHash for a lat/lng point
+        let location = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
 
-        let geoSiteObjc = GeoSite(name: name, lat: "\(coordinate.latitude)", lon: "\(coordinate.longitude)", id: id, createdByUser: createdByUser)
+        let geohash = GFUtils.geoHash(forLocation: location)
+        print("geohash", geohash)
+
+        let geoSiteObjc = GeoSite(name: name, geohash: geohash, lat: "\(coordinate.latitude)", lon: "\(coordinate.longitude)", id: id, createdByUser: createdByUser)
         
         geoSiteRef.setValue(geoSiteObjc.toAnyObject())
 

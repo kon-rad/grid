@@ -15,7 +15,8 @@ target 'grid' do
   pod 'Firebase/Auth', :inhibit_warnings => true
 
   # Pods for grid
-
+  pod 'GeoFire/Utils'
+  
   target 'gridTests' do
     inherit! :search_paths
     # Pods for testing
