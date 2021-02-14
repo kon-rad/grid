@@ -15,11 +15,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let locationManager = CLLocationManager()
 
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+    override init() {
+       super.init()
+        // moved to init function because sometimes it would throw error that it was not initialized
+        // because of trying to load code where it's used before application didFinishLaunchWithOptions is run
         FirebaseApp.configure()
         Database.database().isPersistenceEnabled = true
+       // not really needed unless you really need it FIRDatabase.database().persistenceEnabled = true
+    }
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+
+//        let db = Firestore.firestore()
+        
         return true
     }
 

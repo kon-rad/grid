@@ -10,6 +10,8 @@ import Firebase
 import MapKit
 import CoreLocation
 import GeoFire
+import FirebaseCore
+import FirebaseFirestore
 
 class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
 
@@ -28,7 +30,10 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.requestAlwaysAuthorization()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = kCLDistanceFilterNone
-        locationManager.startUpdatingLocation()
+        // this method requests users location only one time
+        // it causes locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
+        // to be called only once
+//        locationManager.requestLocation()
         
         mapView.showsUserLocation = true
         
@@ -38,15 +43,17 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     override func viewDidAppear(_ animated: Bool) {
         self.renderNavigationBarItems()
         mapView.zoomToUserLocation()
+        locationManager.requestLocation()
     }
     
     @objc func showNearbyMarkers(latitude: Double, longitude: Double) {
         print("coordinate user latitude", latitude)
         print("coordinate user longitude", longitude)
-//         Find cities within 50km of London
+//         Find geosites within 500, the geohash method is not very precise, so having a larger search area is needed
         let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        let radiusInKilometers: Double = 0.5
+        let radiusInKilometers: Double = 500
 
+        let db = Firestore.firestore()
         // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
         // a separate query for each pair. There can be up to 9 pairs of bounds
         // depending on overlap, but in most cases there are 4.
@@ -54,40 +61,53 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
                                               withRadius: radiusInKilometers)
         let queries = queryBounds.compactMap { (any) -> Query? in
             guard let bound = any as? GFGeoQueryBounds else { return nil }
-            return db.collection("geo-sites")
+            return db.collection("geosite")
                 .order(by: "geohash")
                 .start(at: [bound.startValue])
                 .end(at: [bound.endValue])
         }
 
-//        var matchingDocs = [QueryDocumentSnapshot]()
-//        // Collect all the query results together into a single list
-//        func getDocumentsCompletion(snapshot: QuerySnapshot?, error: Error?) -> () {
-//            guard let documents = snapshot?.documents else {
-//                print("Unable to fetch snapshot data. \(String(describing: error))")
-//                return
-//            }
-//
-//            for document in documents {
-//                let lat = document.data()["lat"] as? Double ?? 0
-//                let lng = document.data()["lng"] as? Double ?? 0
-//                let coordinates = CLLocation(latitude: lat, longitude: lng)
-//                let centerPoint = CLLocation(latitude: center.latitude, longitude: center.longitude)
-//
-//                // We have to filter out a few false positives due to GeoHash accuracy, but
-//                // most will match
-//                let distance = GFUtils.distance(from: centerPoint, to: coordinates)
-//                if distance <= radiusInKilometers {
-//                    matchingDocs.append(document)
-//                }
-//            }
-//        }
-//
-//        // After all callbacks have executed, matchingDocs contains the result. Note that this
-//        // sample does not demonstrate how to wait on all callbacks to complete.
-//        for query in queries {
-//            query.getDocuments(completion: getDocumentsCompletion)
-//        }
+        var matchingDocs = [QueryDocumentSnapshot]()
+        // Collect all the query results together into a single list
+        func getDocumentsCompletion(snapshot: QuerySnapshot?, error: Error?) -> () {
+            guard let documents = snapshot?.documents else {
+                print("Unable to fetch snapshot data. \(String(describing: error))")
+                return
+            }
+            print("documents", documents)
+
+            for document in documents {
+                if (document.data()["latitude"] != nil && document.data()["longitude"] != nil) {
+                    
+                    // converts Any to String to Double
+                    let lat = NSString(string: document.data()["latitude"] as! String).doubleValue
+                    let lng = NSString(string: document.data()["longitude"] as! String).doubleValue
+                     
+                    let coordinates = CLLocation(latitude: lat, longitude: lng)
+                    let centerPoint = CLLocation(latitude: center.latitude, longitude: center.longitude)
+                    print("lat", lat)
+                    print("lng", lng)
+                    
+                    // We have to filter out a few false positives due to GeoHash accuracy, but
+                    // most will match
+                    let distance = GFUtils.distance(from: centerPoint, to: coordinates)
+                    if distance <= radiusInKilometers {
+                        matchingDocs.append(document)
+                        // set new pin on map
+                        let newPin = MKPointAnnotation()
+                        newPin.coordinate = coordinates.coordinate
+                        mapView.addAnnotation(newPin)
+                        
+                    }
+                    print("matchingDocs post", matchingDocs)
+                }
+            }
+        }
+        // After all callbacks have executed, matchingDocs contains the result. Note that this
+        // sample does not demonstrate how to wait on all callbacks to complete.
+        for query in queries {
+            query.getDocuments(completion: getDocumentsCompletion)
+        }
     }
     
     @objc func renderNavigationBarItems() {
@@ -128,13 +148,16 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     }
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-    let mUserLocation:CLLocation = locations[0] as CLLocation
+    if let location = locations.first {
+        print("Found user's location: \(location)")
+        let mUserLocation:CLLocation = locations[0] as CLLocation
 
-    let center = CLLocationCoordinate2D(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
-    print("center", center)
-    print("mUserLocation.coordinate.latitude", mUserLocation.coordinate.latitude)
-    print("mUserLocation.coordinate.longitude", mUserLocation.coordinate.longitude)
-    self.showNearbyMarkers(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
+        let center = CLLocationCoordinate2D(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
+        print("center", center)
+        print("mUserLocation.coordinate.latitude", mUserLocation.coordinate.latitude)
+        print("mUserLocation.coordinate.longitude", mUserLocation.coordinate.longitude)
+        self.showNearbyMarkers(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
+    }
   }
     
   func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

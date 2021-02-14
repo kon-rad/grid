@@ -9,8 +9,10 @@ import UIKit
 import MapKit
 import Firebase
 import GeoFire
+import FirebaseCore
+import FirebaseFirestore
 
-class AddGeoSiteViewController: UIViewController {
+class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
 
     @IBOutlet weak var zoomButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
@@ -34,6 +36,10 @@ class AddGeoSiteViewController: UIViewController {
             currentUserRef.setValue(self.user.email)
             currentUserRef.onDisconnectRemoveValue()
         }
+        
+        mapView.showsUserLocation = true
+        
+        mapView.zoomToUserLocation()
     }
     
     @IBAction func onCancel(_ sender: Any) {
@@ -41,7 +47,8 @@ class AddGeoSiteViewController: UIViewController {
     }
     
     @IBAction func onZoomToLocation(_ sender: Any) {
-        print("onZoomToLocation")
+        print("on zoom to location")
+        mapView.zoomToUserLocation()
     }
     
     @IBAction func onSaveTapped(_ sender: Any) {
@@ -53,7 +60,7 @@ class AddGeoSiteViewController: UIViewController {
         }
         print("saving name", name)
         
-        let geoSiteRef = self.geoSiteRef.child(name.lowercased())
+//        let geoSiteRef = self.geoSiteRef.child(name.lowercased())
         
         // create Geohash
         // Compute the GeoHash for a lat/lng point
@@ -61,10 +68,44 @@ class AddGeoSiteViewController: UIViewController {
 
         let geohash = GFUtils.geoHash(forLocation: location)
         print("geohash", geohash)
+        print("geohash type", type(of: geohash))
 
-        let geoSiteObjc = GeoSite(name: name, geohash: geohash, lat: "\(coordinate.latitude)", lon: "\(coordinate.longitude)", id: id, createdByUser: createdByUser)
+        let db = Firestore.firestore()
+        // Add a new document with a generated ID
+        var ref: DocumentReference? = nil
+        ref = db.collection("geosite").addDocument(data: [
+            "name": name,
+            "geohash": geohash,
+            "latitude": "\(coordinate.latitude)",
+            "longitude": "\(coordinate.longitude)",
+            "id": id,
+            "createdByUser": createdByUser,
+        ]) { err in
+            if let err = err {
+                print("Error adding document: \(err)")
+            } else {
+                print("Document added with ID: \(ref!.documentID)")
+            }
+        }
         
-        geoSiteRef.setValue(geoSiteObjc.toAnyObject())
+        
+        dismiss(animated: true, completion: nil)
 
+//        let geoSiteObjc = GeoSite(name: name, geohash: geohash, lat: "\(coordinate.latitude)", lon: "\(coordinate.longitude)", id: id, createdByUser: createdByUser)
+//
+//        geoSiteRef.setValue(geoSiteObjc.toAnyObject())
+
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+      mapView.showsUserLocation = status == .authorizedAlways
+    }
+    
+    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+      print("Monitoring failed for region with identifier: \(region!.identifier)")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+      print("Location Manager failed with the following error: \(error)")
     }
 }
