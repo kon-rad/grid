@@ -23,6 +23,8 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     
     fileprivate let locationManager = CLLocationManager()
     
+    let annotationViewIdentifier = "geositeAnnotation"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,11 +32,7 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.requestAlwaysAuthorization()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = kCLDistanceFilterNone
-        // this method requests users location only one time
-        // it causes locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
-        // to be called only once
-//        locationManager.requestLocation()
-        
+        mapView.delegate = self;
         mapView.showsUserLocation = true
         
         mapView.zoomToUserLocation()
@@ -42,8 +40,8 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         self.renderNavigationBarItems()
-        mapView.zoomToUserLocation()
         locationManager.requestLocation()
+        mapView.zoomToUserLocation()
     }
     
     @objc func showNearbyMarkers(latitude: Double, longitude: Double) {
@@ -79,14 +77,15 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
             for document in documents {
                 if (document.data()["latitude"] != nil && document.data()["longitude"] != nil) {
                     
-                    // converts Any to String to Double
                     let lat = NSString(string: document.data()["latitude"] as! String).doubleValue
                     let lng = NSString(string: document.data()["longitude"] as! String).doubleValue
+                    let name = document.data()["name"] as! String
+                    let createdByUser = document.data()["createdByUser"] as! String
+                    let id = document.data()["id"] as! String
+                    let creatorId = document.data()["creatorId"] as! String
                      
                     let coordinates = CLLocation(latitude: lat, longitude: lng)
                     let centerPoint = CLLocation(latitude: center.latitude, longitude: center.longitude)
-                    print("lat", lat)
-                    print("lng", lng)
                     
                     // We have to filter out a few false positives due to GeoHash accuracy, but
                     // most will match
@@ -94,9 +93,14 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
                     if distance <= radiusInKilometers {
                         matchingDocs.append(document)
                         // set new pin on map
-                        let newPin = MKPointAnnotation()
-                        newPin.coordinate = coordinates.coordinate
-                        mapView.addAnnotation(newPin)
+                        let newAnnotation = GeoSiteAnnotation(
+                            coordinate: coordinates.coordinate,
+                            name: name,
+                            createdByUser: createdByUser,
+                            geoSiteId: id,
+                            creatorId: creatorId
+                        )
+                        mapView.addAnnotation(newAnnotation)
                         
                     }
                     print("matchingDocs post", matchingDocs)
@@ -172,4 +176,49 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     print("Location Manager failed with the following error: \(error)")
   }
   
+}
+
+// MARK: MapView Delegate
+extension GeoSiteViewController: MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+
+        print("annotation mapView viewFor method called -------------------------- ", annotation)
+        guard !annotation.isKind(of: MKUserLocation.self) else {
+            // Make a fast exit if the annotation is the `MKUserLocation`, as it's not an annotation view we wish to customize.
+            return nil
+        }
+        let identifier = "geositeAnnotation"
+        var view: MKMarkerAnnotationView
+        
+        if let dequeuedView = mapView.dequeueReusableAnnotationView(
+          withIdentifier: identifier) as? MKMarkerAnnotationView {
+          dequeuedView.annotation = annotation
+          view = dequeuedView
+        } else {
+            view = MKMarkerAnnotationView(
+                annotation: annotation,
+                reuseIdentifier: identifier)
+            view.canShowCallout = true
+            let goButton = UIButton(type: .custom)
+            goButton.frame = CGRect(x: 0, y: 0, width: 23, height: 23)
+            goButton.setImage(UIImage(named: "go_icon"), for: .normal)
+            view.rightCalloutAccessoryView = goButton
+        }
+            
+        return view
+    }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        print("tapped call out")
+        let geoSiteAnnotation = view.annotation as! GeoSiteAnnotation
+        print("geoSiteAnnotation: ", geoSiteAnnotation)
+        let ListPathsVC = self.storyboard?.instantiateViewController(withIdentifier: "ListPathsVC") as! ListPathsViewController
+        ListPathsVC.modalPresentationStyle = .fullScreen
+        ListPathsVC.name = geoSiteAnnotation.name
+        ListPathsVC.createdByUser = geoSiteAnnotation.createdByUser
+        ListPathsVC.geoSiteId = geoSiteAnnotation.geoSiteId
+        ListPathsVC.creatorId = geoSiteAnnotation.creatorId
+        self.present(ListPathsVC, animated: true, completion: nil)
+    }
 }

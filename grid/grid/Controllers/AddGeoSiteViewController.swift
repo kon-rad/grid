@@ -55,12 +55,10 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         let coordinate = mapView.centerCoordinate
         let id = NSUUID().uuidString
         let createdByUser = self.user.email
+        let creatorId = Auth.auth().currentUser?.uid
         guard let name = nameTextField.text else {
             return
         }
-        print("saving name", name)
-        
-//        let geoSiteRef = self.geoSiteRef.child(name.lowercased())
         
         // create Geohash
         // Compute the GeoHash for a lat/lng point
@@ -68,7 +66,6 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
 
         let geohash = GFUtils.geoHash(forLocation: location)
         print("geohash", geohash)
-        print("geohash type", type(of: geohash))
 
         let db = Firestore.firestore()
         // Add a new document with a generated ID
@@ -80,6 +77,7 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
             "longitude": "\(coordinate.longitude)",
             "id": id,
             "createdByUser": createdByUser,
+            "creatorId": creatorId
         ]) { err in
             if let err = err {
                 print("Error adding document: \(err)")
@@ -90,11 +88,6 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         
         
         dismiss(animated: true, completion: nil)
-
-//        let geoSiteObjc = GeoSite(name: name, geohash: geohash, lat: "\(coordinate.latitude)", lon: "\(coordinate.longitude)", id: id, createdByUser: createdByUser)
-//
-//        geoSiteRef.setValue(geoSiteObjc.toAnyObject())
-
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

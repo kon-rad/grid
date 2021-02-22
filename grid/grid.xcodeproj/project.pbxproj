@@ -10,6 +10,11 @@
 		0A72B74A65A8080A5FE019D6 /* Pods_grid_gridUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3B25599D134175B1B8E76F /* Pods_grid_gridUITests.framework */; };
 		36C9202543779D3AC06955FC /* Pods_gridTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C51529EC6EBB034E688B418 /* Pods_gridTests.framework */; };
 		64A930B1EA271C920CABDE66 /* Pods_grid.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9440EBD9EC862521CCE4C011 /* Pods_grid.framework */; };
+		FA0032AA25E2D33D00C99247 /* GeoSiteAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0032A925E2D33D00C99247 /* GeoSiteAnnotation.swift */; };
+		FA0032AF25E300ED00C99247 /* AddPathViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0032AE25E300ED00C99247 /* AddPathViewController.swift */; };
+		FA0032B425E3010600C99247 /* ListPathsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0032B325E3010600C99247 /* ListPathsViewController.swift */; };
+		FA0032D125E3387A00C99247 /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0032D025E3387A00C99247 /* Path.swift */; };
+		FA0032D625E3471E00C99247 /* PathCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0032D525E3471E00C99247 /* PathCell.swift */; };
 		FA10ECEE25BD1A8200161290 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10ECED25BD1A8200161290 /* LoginViewController.swift */; };
 		FA10ECF725BD214200161290 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10ECF625BD214200161290 /* User.swift */; };
 		FA2EBECF25BD0F47006EF41C /* GeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2EBECE25BD0F47006EF41C /* GeoSiteViewController.swift */; };
@@ -21,7 +26,7 @@
 		FABB116025AAC62F0087C794 /* SnapshotAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB115D25AAC62F0087C794 /* SnapshotAnchor.swift */; };
 		FABB116125AAC62F0087C794 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB115E25AAC62F0087C794 /* RoundedButton.swift */; };
 		FABB116225AAC62F0087C794 /* ARUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB115F25AAC62F0087C794 /* ARUtilities.swift */; };
-		FABB116A25AAC6EF0087C794 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB115625AAC6050087C794 /* ViewController.swift */; };
+		FABB116A25AAC6EF0087C794 /* ARPathCreatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB115625AAC6050087C794 /* ARPathCreatorViewController.swift */; };
 		FABB117225AAC7710087C794 /* Assets.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = FABB117125AAC7710087C794 /* Assets.scnassets */; };
 		FAF80BCA25A170480098463A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF80BC925A170480098463A /* AppDelegate.swift */; };
 		FAF80BD325A1704B0098463A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FAF80BD225A1704B0098463A /* Assets.xcassets */; };
@@ -57,6 +62,11 @@
 		ABFCC5D7BD65764BBCE06EF2 /* Pods-gridTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gridTests.release.xcconfig"; path = "Target Support Files/Pods-gridTests/Pods-gridTests.release.xcconfig"; sourceTree = "<group>"; };
 		E82D4B4EE2D9D4B2DE8085FF /* Pods-grid.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-grid.debug.xcconfig"; path = "Target Support Files/Pods-grid/Pods-grid.debug.xcconfig"; sourceTree = "<group>"; };
 		F764D680C9BCCCDA56C11D62 /* Pods-grid-gridUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-grid-gridUITests.debug.xcconfig"; path = "Target Support Files/Pods-grid-gridUITests/Pods-grid-gridUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		FA0032A925E2D33D00C99247 /* GeoSiteAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoSiteAnnotation.swift; sourceTree = "<group>"; };
+		FA0032AE25E300ED00C99247 /* AddPathViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPathViewController.swift; sourceTree = "<group>"; };
+		FA0032B325E3010600C99247 /* ListPathsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPathsViewController.swift; sourceTree = "<group>"; };
+		FA0032D025E3387A00C99247 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
+		FA0032D525E3471E00C99247 /* PathCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathCell.swift; sourceTree = "<group>"; };
 		FA10ECED25BD1A8200161290 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		FA10ECF625BD214200161290 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		FA10ED0F25BD22C400161290 /* grid.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = grid.entitlements; sourceTree = "<group>"; };
@@ -65,7 +75,7 @@
 		FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGeoSiteViewController.swift; sourceTree = "<group>"; };
 		FA97062A25CF9440008DBC72 /* GeoSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoSite.swift; sourceTree = "<group>"; };
-		FABB115625AAC6050087C794 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		FABB115625AAC6050087C794 /* ARPathCreatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARPathCreatorViewController.swift; sourceTree = "<group>"; };
 		FABB115725AAC6050087C794 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		FABB115D25AAC62F0087C794 /* SnapshotAnchor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnapshotAnchor.swift; sourceTree = "<group>"; };
 		FABB115E25AAC62F0087C794 /* RoundedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedButton.swift; sourceTree = "<group>"; };
@@ -135,11 +145,37 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		FA0032A525E2BF6B00C99247 /* Annotations */ = {
+			isa = PBXGroup;
+			children = (
+				FA0032A925E2D33D00C99247 /* GeoSiteAnnotation.swift */,
+			);
+			path = Annotations;
+			sourceTree = "<group>";
+		};
+		FA0032C325E3144900C99247 /* UIElements */ = {
+			isa = PBXGroup;
+			children = (
+				FABB115E25AAC62F0087C794 /* RoundedButton.swift */,
+				FA0032D525E3471E00C99247 /* PathCell.swift */,
+			);
+			path = UIElements;
+			sourceTree = "<group>";
+		};
+		FA0032C425E3145E00C99247 /* AR */ = {
+			isa = PBXGroup;
+			children = (
+				FABB115D25AAC62F0087C794 /* SnapshotAnchor.swift */,
+			);
+			path = AR;
+			sourceTree = "<group>";
+		};
 		FA10ECF225BD212700161290 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				FA10ECF625BD214200161290 /* User.swift */,
 				FA97062A25CF9440008DBC72 /* GeoSite.swift */,
+				FA0032D025E3387A00C99247 /* Path.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -147,9 +183,12 @@
 		FA2EBECD25BD0F33006EF41C /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				FABB115625AAC6050087C794 /* ARPathCreatorViewController.swift */,
 				FA2EBECE25BD0F47006EF41C /* GeoSiteViewController.swift */,
 				FA10ECED25BD1A8200161290 /* LoginViewController.swift */,
 				FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */,
+				FA0032AE25E300ED00C99247 /* AddPathViewController.swift */,
+				FA0032B325E3010600C99247 /* ListPathsViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -188,15 +227,15 @@
 		FAF80BC825A170480098463A /* grid */ = {
 			isa = PBXGroup;
 			children = (
+				FA0032C425E3145E00C99247 /* AR */,
+				FA0032C325E3144900C99247 /* UIElements */,
+				FA0032A525E2BF6B00C99247 /* Annotations */,
 				FA10ED0F25BD22C400161290 /* grid.entitlements */,
 				FA10ECF225BD212700161290 /* Models */,
 				FA2EBEED25BD1112006EF41C /* Utilities */,
 				FA2EBECD25BD0F33006EF41C /* Controllers */,
 				FABB117125AAC7710087C794 /* Assets.scnassets */,
-				FABB115E25AAC62F0087C794 /* RoundedButton.swift */,
-				FABB115D25AAC62F0087C794 /* SnapshotAnchor.swift */,
 				FABB115725AAC6050087C794 /* Main.storyboard */,
-				FABB115625AAC6050087C794 /* ViewController.swift */,
 				FAF80BC925A170480098463A /* AppDelegate.swift */,
 				FAF80BD225A1704B0098463A /* Assets.xcassets */,
 				FAF80BD425A1704B0098463A /* LaunchScreen.storyboard */,
@@ -464,16 +503,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FABB116A25AAC6EF0087C794 /* ViewController.swift in Sources */,
+				FABB116A25AAC6EF0087C794 /* ARPathCreatorViewController.swift in Sources */,
+				FA0032AA25E2D33D00C99247 /* GeoSiteAnnotation.swift in Sources */,
+				FA0032AF25E300ED00C99247 /* AddPathViewController.swift in Sources */,
+				FA0032D625E3471E00C99247 /* PathCell.swift in Sources */,
 				FA2EBECF25BD0F47006EF41C /* GeoSiteViewController.swift in Sources */,
 				FA2EBEEF25BD113E006EF41C /* Utilities.swift in Sources */,
 				FABB116025AAC62F0087C794 /* SnapshotAnchor.swift in Sources */,
 				FA10ECEE25BD1A8200161290 /* LoginViewController.swift in Sources */,
 				FA97062625CF7BF3008DBC72 /* AddGeoSiteViewController.swift in Sources */,
 				FA10ECF725BD214200161290 /* User.swift in Sources */,
+				FA0032B425E3010600C99247 /* ListPathsViewController.swift in Sources */,
 				FAF80BCA25A170480098463A /* AppDelegate.swift in Sources */,
 				FABB116225AAC62F0087C794 /* ARUtilities.swift in Sources */,
 				FABB116125AAC62F0087C794 /* RoundedButton.swift in Sources */,
+				FA0032D125E3387A00C99247 /* Path.swift in Sources */,
 				FA97062B25CF9440008DBC72 /* GeoSite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
