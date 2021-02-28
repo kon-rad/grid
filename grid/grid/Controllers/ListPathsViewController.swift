@@ -40,6 +40,7 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        print("viewDidAppear")
         displayListOfPaths()
     }
     
@@ -56,7 +57,8 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func displayListOfPaths() {
-        self.items = []
+        self.items.removeAll()
+//        self.tableView.reloadData()
         self.getAllPaths() {
             print("loaded paths: ", self.items)
             self.tableView.reloadData()
@@ -74,8 +76,9 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
                     let pathId = document.get("pathId") as! String
                     let creatorEmail = document.get("creatorEmail") as! String
                     let creatorId = document.get("creatorId") as! String
+                    let documentID = document.documentID
                     print(name, pathId, description)
-                    let path = Path(name: name, description: description, geoSiteId: self.geoSiteId, creatorEmail: creatorEmail, creatorId: creatorId, pathId: pathId)
+                    let path = Path(name: name, description: description, geoSiteId: self.geoSiteId, creatorEmail: creatorEmail, creatorId: creatorId, pathId: pathId, documentID: documentID)
                     self.items.append(path)
                     
                 }
@@ -89,6 +92,7 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
         let AddPathVC = self.storyboard?.instantiateViewController(withIdentifier: "AddPathVC") as! AddPathViewController
         AddPathVC.modalPresentationStyle = .fullScreen
         AddPathVC.geoSiteId = self.geoSiteId
+        AddPathVC.delegate = self
         self.present(AddPathVC, animated: true, completion: nil)
     }
     
@@ -121,5 +125,29 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        if let subjectCell = tableView.cellForRow(at: indexPath as IndexPath) {
+            print(indexPath, subjectCell)
+            
+            let PathVC = self.storyboard?.instantiateViewController(withIdentifier: "PathVC") as! PathViewController
+            PathVC.modalPresentationStyle = .fullScreen
+            PathVC.path = self.items[indexPath.item]
+            print("path clicked: ", self.items[indexPath.item])
+            
+            self.present(PathVC, animated: true, completion: nil)
+        }
+    }
+    
+}
+
+extension ListPathsViewController: AddPathViewControllerDelegate {
+    func completedUpdate(path: Path) {
+    }
+    
+    func completedSaveOrUpdate() {
+        dismiss(animated: true, completion: nil)
     }
 }

@@ -17,6 +17,7 @@
 		FA0032D625E3471E00C99247 /* PathCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0032D525E3471E00C99247 /* PathCell.swift */; };
 		FA10ECEE25BD1A8200161290 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10ECED25BD1A8200161290 /* LoginViewController.swift */; };
 		FA10ECF725BD214200161290 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA10ECF625BD214200161290 /* User.swift */; };
+		FA15831A25EAC66E0086E3A6 /* PathViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA15831925EAC66E0086E3A6 /* PathViewController.swift */; };
 		FA2EBECF25BD0F47006EF41C /* GeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2EBECE25BD0F47006EF41C /* GeoSiteViewController.swift */; };
 		FA2EBEEF25BD113E006EF41C /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2EBEEE25BD113E006EF41C /* Utilities.swift */; };
 		FA319E4625BCD3BF00D943E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */; };
@@ -70,6 +71,7 @@
 		FA10ECED25BD1A8200161290 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		FA10ECF625BD214200161290 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		FA10ED0F25BD22C400161290 /* grid.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = grid.entitlements; sourceTree = "<group>"; };
+		FA15831925EAC66E0086E3A6 /* PathViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathViewController.swift; sourceTree = "<group>"; };
 		FA2EBECE25BD0F47006EF41C /* GeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoSiteViewController.swift; sourceTree = "<group>"; };
 		FA2EBEEE25BD113E006EF41C /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 				FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */,
 				FA0032AE25E300ED00C99247 /* AddPathViewController.swift */,
 				FA0032B325E3010600C99247 /* ListPathsViewController.swift */,
+				FA15831925EAC66E0086E3A6 /* PathViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -513,6 +516,7 @@
 				FA10ECEE25BD1A8200161290 /* LoginViewController.swift in Sources */,
 				FA97062625CF7BF3008DBC72 /* AddGeoSiteViewController.swift in Sources */,
 				FA10ECF725BD214200161290 /* User.swift in Sources */,
+				FA15831A25EAC66E0086E3A6 /* PathViewController.swift in Sources */,
 				FA0032B425E3010600C99247 /* ListPathsViewController.swift in Sources */,
 				FAF80BCA25A170480098463A /* AppDelegate.swift in Sources */,
 				FABB116225AAC62F0087C794 /* ARUtilities.swift in Sources */,
