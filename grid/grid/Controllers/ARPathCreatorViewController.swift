@@ -20,6 +20,9 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var snapshotThumbnail: UIImageView!
     
+    
+    var delegate: ARPathCreatorViewControllerDelegate?
+    
     // MARK: - View Life Cycle
     
     // Lock the orientation of the app to the orientation in which it is launched
@@ -191,16 +194,21 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             map.anchors.append(snapshotAnchor)
             
             do {
-                let data = try NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
-                try data.write(to: self.mapSaveURL, options: [.atomic])
-                DispatchQueue.main.async {
-                    self.loadExperienceButton.isHidden = false
-                    self.loadExperienceButton.isEnabled = true
-                }
+                let worldMapData = try NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
+                self.delegate?.completedARWorldMapCreation(worldMapData: worldMapData)
+                
+//                try data.write(to: self.mapSaveURL, options: [.atomic])
+//                DispatchQueue.main.async {
+//                    self.loadExperienceButton.isHidden = false
+//                    self.loadExperienceButton.isEnabled = true
+//                }
             } catch {
                 fatalError("Can't save map: \(error.localizedDescription)")
             }
         }
+        
+        // pass worldmap to path creator view
+//        let data = try NSKeyedArchiver.archivedData(withRootObject: worldMap, requiringSecureCoding: true)
     }
     
     // Called opportunistically to verify that map data can be loaded from filesystem.
@@ -344,4 +352,8 @@ extension UIViewController {
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
+}
+
+protocol ARPathCreatorViewControllerDelegate {
+    func completedARWorldMapCreation(worldMapData: Data)
 }
