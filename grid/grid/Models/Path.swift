@@ -16,8 +16,9 @@ struct Path {
     var creatorId: String
     var pathId: String
     var documentID: String
+    var worldMapDownloadURL: String
     
-    init(name: String, description: String, geoSiteId: String, creatorEmail: String, creatorId: String, pathId: String, documentID: String) {
+    init(name: String, description: String, geoSiteId: String, creatorEmail: String, creatorId: String, pathId: String, documentID: String, worldMapDownloadURL: String) {
         self.name = name
         self.description = description
         self.geoSiteId = geoSiteId
@@ -25,6 +26,7 @@ struct Path {
         self.creatorId = creatorId
         self.pathId = pathId
         self.documentID = documentID
+        self.worldMapDownloadURL = worldMapDownloadURL
     }
     
 }

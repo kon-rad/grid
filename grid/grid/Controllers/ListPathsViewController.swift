@@ -46,7 +46,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     
     func  conditionallyDisplayAddButton() {
         let currentUserId = Auth.auth().currentUser?.uid
-        //        guard let currentUserId = Auth.auth().currentUser.uid? else { return }
         print("current user id", currentUserId!)
         if (currentUserId == creatorId) {
             print("current user is author")
@@ -58,7 +57,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     
     func displayListOfPaths() {
         self.items.removeAll()
-//        self.tableView.reloadData()
         self.getAllPaths() {
             print("loaded paths: ", self.items)
             self.tableView.reloadData()
@@ -77,8 +75,18 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
                     let creatorEmail = document.get("creatorEmail") as! String
                     let creatorId = document.get("creatorId") as! String
                     let documentID = document.documentID
+                    let worldMapDownloadURL = document.get("worldMapDownloadURL") ?? ""
                     print(name, pathId, description)
-                    let path = Path(name: name, description: description, geoSiteId: self.geoSiteId, creatorEmail: creatorEmail, creatorId: creatorId, pathId: pathId, documentID: documentID)
+                    let path = Path(
+                        name: name,
+                        description: description,
+                        geoSiteId: self.geoSiteId,
+                        creatorEmail: creatorEmail,
+                        creatorId: creatorId,
+                        pathId: pathId,
+                        documentID: documentID,
+                        worldMapDownloadURL: worldMapDownloadURL as! String
+                    )
                     self.items.append(path)
                     
                 }

@@ -8,6 +8,7 @@ Main view controller for the AR experience.
 import UIKit
 import SceneKit
 import ARKit
+import FirebaseStorage
 
 class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     // MARK: - IBOutlets
@@ -16,10 +17,11 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     @IBOutlet weak var sessionInfoLabel: UILabel!
     @IBOutlet weak var sceneView: ARSCNView!
     @IBOutlet weak var saveExperienceButton: UIButton!
-    @IBOutlet weak var loadExperienceButton: UIButton!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var snapshotThumbnail: UIImageView!
     
+    var pathId: String?
+    var isCreatingPath: Bool = true
     
     var delegate: ARPathCreatorViewControllerDelegate?
     
@@ -33,9 +35,9 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Read in any already saved map to see if we can load one.
-        if mapDataFromFile != nil {
-            self.loadExperienceButton.isHidden = false
+        if !isCreatingPath {
+            self.loadExperience()
+            self.saveExperienceButton.isHidden = true
         }
         
         self.hideKeyboardWhenTappedAround()
@@ -181,9 +183,21 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             fatalError("Can't get file save URL: \(error.localizedDescription)")
         }
     }()
+    @IBAction func onBackButtonPress(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
     
+    @IBAction func onStartPointImagePress(_ sender: Any) {
+        
+    
+    // Add a snapshot image indicating where the map was captured.
+//    guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
+//        else { fatalError("Can't take snapshot") }
+//    map.anchors.append(snapshotAnchor)
+    }
     /// - Tag: GetWorldMap
     @IBAction func saveExperience(_ button: UIButton) {
+        print("save experience pressed")
         sceneView.session.getCurrentWorldMap { worldMap, error in
             guard let map = worldMap
                 else { self.showAlert(title: "Can't get current world map", message: error!.localizedDescription); return }
@@ -211,43 +225,52 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
 //        let data = try NSKeyedArchiver.archivedData(withRootObject: worldMap, requiringSecureCoding: true)
     }
     
+    func loadExperience() {
+        guard self.pathId != nil else {
+            return
+        }
+        let storage = Storage.storage()
+        let mapRefrence = storage.reference(withPath: "worldMaps/\(self.pathId ?? "")")
+        // 10 MB max
+        mapRefrence.getData(maxSize: 10 * 1024 * 1024) { data, error in
+            if let error = error {
+                print("Error while downloading map data: ", error)
+                fatalError("Error while downloading map data")
+//                    dismiss(animated: true, completion: nil)
+//                    return;
+            }
+            let worldMap: ARWorldMap = { () -> ARWorldMap in
+                do {
+                    guard let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data!)
+                        else { fatalError("No ARWorldMap in archive.") }
+                    return worldMap
+                } catch {
+                    fatalError("Can't unarchive ARWorldMap from file data: \(error)")
+                }
+            }()
+            
+            // Display the snapshot image stored in the world map to aid user in relocalizing.
+            if let snapshotData = worldMap.snapshotAnchor?.imageData,
+                let snapshot = UIImage(data: snapshotData) {
+                self.snapshotThumbnail.image = snapshot
+            } else {
+                print("No snapshot image in world map")
+            }
+            // Remove the snapshot anchor from the world map since we do not need it in the scene.
+            worldMap.anchors.removeAll(where: { $0 is SnapshotAnchor })
+            
+            let configuration = self.defaultConfiguration // this app's standard world tracking settings
+            configuration.initialWorldMap = worldMap
+            self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+
+            self.isRelocalizingMap = true
+            self.virtualObjectAnchor = nil
+        }
+    }
+    
     // Called opportunistically to verify that map data can be loaded from filesystem.
     var mapDataFromFile: Data? {
         return try? Data(contentsOf: mapSaveURL)
-    }
-    
-    /// - Tag: RunWithWorldMap
-    @IBAction func loadExperience(_ button: UIButton) {
-        
-        /// - Tag: ReadWorldMap
-        let worldMap: ARWorldMap = {
-            guard let data = mapDataFromFile
-                else { fatalError("Map data should already be verified to exist before Load button is enabled.") }
-            do {
-                guard let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data)
-                    else { fatalError("No ARWorldMap in archive.") }
-                return worldMap
-            } catch {
-                fatalError("Can't unarchive ARWorldMap from file data: \(error)")
-            }
-        }()
-        
-        // Display the snapshot image stored in the world map to aid user in relocalizing.
-        if let snapshotData = worldMap.snapshotAnchor?.imageData,
-            let snapshot = UIImage(data: snapshotData) {
-            self.snapshotThumbnail.image = snapshot
-        } else {
-            print("No snapshot image in world map")
-        }
-        // Remove the snapshot anchor from the world map since we do not need it in the scene.
-        worldMap.anchors.removeAll(where: { $0 is SnapshotAnchor })
-        
-        let configuration = self.defaultConfiguration // this app's standard world tracking settings
-        configuration.initialWorldMap = worldMap
-        sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-
-        isRelocalizingMap = true
-        virtualObjectAnchor = nil
     }
 
     // MARK: - AR session management

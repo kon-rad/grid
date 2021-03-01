@@ -13,6 +13,8 @@ class AddPathViewController: UIViewController {
 
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextField!
+    @IBOutlet weak var snapshotImageRefrence: UIImageView!
+    
     var geoSiteId: String = ""
     var isEdit: Bool = false
     var path: Path? = nil
@@ -21,6 +23,7 @@ class AddPathViewController: UIViewController {
     var pathId: String?
     var worldMapData: Data?
     var downloadURL: String?
+    var pathStartSnapshot: UIImage?
     
     var delegate: AddPathViewControllerDelegate?
     
@@ -122,29 +125,37 @@ class AddPathViewController: UIViewController {
         ])
         self.path?.name = name
         self.path?.description = description
-        self.path?.downloadURL = self.downloadURL
+        self.path?.worldMapDownloadURL = self.downloadURL ?? ""
         delegate?.completedUpdate(path: self.path!)
     }
     
     func uploadMapData(completion: @escaping () -> Void) {
+        guard self.worldMapData != nil else {
+            completion()
+            return
+        }
+        // TODO: add saving progress indicator
+        // TODO: delete existing world map if updating
+        
         // Get a reference to the storage service using the default Firebase App
         let storage = Storage.storage()
 
         // Create a storage reference from our storage service
         let storageRef = storage.reference()
 
-        var worldMapRef = storageRef.child("worldMaps/\(self.pathId)")
+        let worldMapRef = storageRef.child("worldMaps/\(self.pathId ?? "")")
 
         // Upload the data to the path "worldMaps/pathId"
-        let uploadTask = worldMapRef.putData(self.worldMapData, metadata: nil) { (metadata, error) in
+        worldMapRef.putData(self.worldMapData!, metadata: nil) { (metadata, error) in
           guard let metadata = metadata else {
             // Uh-oh, an error occurred!
-            print("Error uploading worldmap data, error:", error)
+            print("Eror uploading worldmap data, error:", error ?? " error not available")
             completion()
             return
           }
           // Metadata contains file metadata such as size, content-type.
           let size = metadata.size
+          print("upload size: ", size)
           // You can also access to download URL after upload.
           worldMapRef.downloadURL { (url, error) in
             guard let downloadURL = url else {
@@ -154,7 +165,7 @@ class AddPathViewController: UIViewController {
               return
             }
             print("upload complete!!! *** download URL is ", downloadURL)
-            self.downloadURL = downloadURL
+            self.downloadURL = downloadURL.absoluteString
             completion()
           }
         }
@@ -178,7 +189,8 @@ extension AddPathViewController: ARPathCreatorViewControllerDelegate {
     
     func completedARWorldMapCreation(worldMapData: Data) {
         self.worldMapData = worldMapData
-        print("saved worldmap", self.worldMapData)
+//        self.pathStartSnapshot = snapshot
+        print("saved worldmap", self.worldMapData ?? " worldMapData not available")
         dismiss(animated: true, completion: nil)
     }
 }
