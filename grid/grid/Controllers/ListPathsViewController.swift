@@ -30,7 +30,7 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
         super.viewDidLoad()
         print("ListPathsVC did load, creatorId:", creatorId)
         titleLabel.text = self.name
-        createdByLabel.text = self.createdByUser
+        createdByLabel.text = "Created by \(self.createdByUser)"
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -139,6 +139,12 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
 
         if let subjectCell = tableView.cellForRow(at: indexPath as IndexPath) {
             print(indexPath, subjectCell)
+            
+            guard indexPath.item < self.items.count else {
+                print("index out of range, Index: \(indexPath.item) items.count: \(self.items.count)")
+                return
+                
+            }
             
             let PathVC = self.storyboard?.instantiateViewController(withIdentifier: "PathVC") as! PathViewController
             PathVC.modalPresentationStyle = .fullScreen

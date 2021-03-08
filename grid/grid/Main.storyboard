@@ -22,13 +22,28 @@
                                 <rect key="frame" x="0.0" y="77" width="414" height="785"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MGQ-C9-B24">
+                                <rect key="frame" x="143" y="107" width="128" height="41"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <state key="normal" title="Search Here"/>
+                                <connections>
+                                    <action selector="searchHereButtonPressed:" destination="tWC-gg-f9V" eventType="touchUpInside" id="4PD-3O-WoQ"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="k7l-0L-8GT">
+                                <rect key="frame" x="197" y="298" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ztL-4V-HVU"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="I47-YA-s6h"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="k7l-0L-8GT" id="2TG-sY-U2U"/>
                         <outlet property="mapView" destination="Bkv-Ce-GyT" id="VtT-pP-hWv"/>
+                        <outlet property="searchHereButton" destination="MGQ-C9-B24" id="xp8-Wa-d36"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AEY-YZ-9SQ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -295,6 +310,7 @@
                         <outlet property="sessionInfoView" destination="37h-bD-Iyn" id="e6g-gN-reW"/>
                         <outlet property="snapshotThumbnail" destination="f6U-ce-g4P" id="we1-gb-AkX"/>
                         <outlet property="statusLabel" destination="aD6-EU-VHg" id="XNR-tR-am9"/>
+                        <outlet property="takeImageButton" destination="eF0-Sy-Tkc" id="N7S-cf-oAc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hvH-ud-t1P" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -533,11 +549,11 @@
                                 <color key="textColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAI-XP-fUP">
-                                <rect key="frame" x="351" y="44" width="34" height="36"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAI-XP-fUP">
+                                <rect key="frame" x="344" y="51" width="49" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <state key="normal" title="Edit">
+                                <color key="tintColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="Edit" image="pencil" catalog="system">
                                     <color key="titleColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <color key="titleShadowColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
@@ -564,11 +580,24 @@
                                 <color key="textColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cZD-Kz-hhR">
+                                <rect key="frame" x="334" y="81" width="72" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" systemColor="systemRedColor"/>
+                                <state key="normal" title="Delete" image="trash" catalog="system">
+                                    <color key="titleColor" systemColor="systemRedColor"/>
+                                    <color key="titleShadowColor" red="0.99989157920000005" green="1" blue="0.99988096950000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="onTouchDelete:" destination="Bjs-Sz-occ" eventType="touchUpInside" id="YBh-al-IBm"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="KxQ-hj-Zdc"/>
                         <color key="backgroundColor" red="0.30389779810000001" green="0.67029654979999997" blue="0.91375714539999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </view>
                     <connections>
+                        <outlet property="deleteButton" destination="cZD-Kz-hhR" id="FP1-0e-dbB"/>
                         <outlet property="editButton" destination="aAI-XP-fUP" id="W6A-eR-rMr"/>
                         <outlet property="enterARPathButton" destination="gg4-PF-Cgp" id="ymO-6r-1Fo"/>
                         <outlet property="notCreatedLabel" destination="N94-rd-qcv" id="2ji-gz-q8W"/>
@@ -666,11 +695,16 @@
                                 <rect key="frame" x="103" y="384" width="124" height="269"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="HqI-p1-MDz">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="rBH-o7-9kB"/>
                         <color key="backgroundColor" red="0.30389779810000001" green="0.67029654979999997" blue="0.91375714539999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="HqI-p1-MDz" id="POQ-jj-OCR"/>
                         <outlet property="descriptionTextField" destination="0bh-2I-7cL" id="e7Z-qw-D4P"/>
                         <outlet property="nameTextField" destination="fxI-dO-kdz" id="uXZ-tY-0gY"/>
                         <outlet property="snapshotImageRefrence" destination="IZM-Mo-VGY" id="tWe-GS-RiD"/>
@@ -694,11 +728,16 @@
         <image name="chevron.left" catalog="system" width="96" height="128"/>
         <image name="grid_logo" width="3300" height="2550"/>
         <image name="location.fill" catalog="system" width="128" height="121"/>
+        <image name="pencil" catalog="system" width="128" height="113"/>
         <image name="plus" catalog="system" width="128" height="113"/>
         <image name="restart" width="20" height="23"/>
         <image name="restartPressed" width="20" height="23"/>
+        <image name="trash" catalog="system" width="121" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

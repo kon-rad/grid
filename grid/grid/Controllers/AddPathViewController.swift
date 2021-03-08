@@ -24,12 +24,14 @@ class AddPathViewController: UIViewController {
     var worldMapData: Data?
     var downloadURL: String?
     var pathStartSnapshot: UIImage?
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var delegate: AddPathViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("add path VC loaded")
+        activityIndicator.isHidden = true
         renderEditView()
         if (!self.isEdit) {
             self.pathId = NSUUID().uuidString
@@ -54,6 +56,8 @@ class AddPathViewController: UIViewController {
     
     @IBAction func onSave(_ sender: Any) {
         print("AddPathVC save pressed")
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
         if (self.isEdit) {
             onUpdate()
             return
@@ -107,6 +111,7 @@ class AddPathViewController: UIViewController {
             }
         }
         
+        activityIndicator.stopAnimating()
         delegate?.completedSaveOrUpdate()
     }
     
@@ -126,6 +131,8 @@ class AddPathViewController: UIViewController {
         self.path?.name = name
         self.path?.description = description
         self.path?.worldMapDownloadURL = self.downloadURL ?? ""
+        
+        activityIndicator.stopAnimating()
         delegate?.completedUpdate(path: self.path!)
     }
     

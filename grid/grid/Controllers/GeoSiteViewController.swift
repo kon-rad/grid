@@ -18,6 +18,8 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var signInButton: UIButton!
     @IBOutlet weak var addButton: UIButton!
+    @IBOutlet weak var searchHereButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     let geoSiteRef = Database.database().reference(withPath: "geo-sites")
     
@@ -34,8 +36,11 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.distanceFilter = kCLDistanceFilterNone
         mapView.delegate = self;
         mapView.showsUserLocation = true
+        searchHereButton.isHidden = true
         
         mapView.zoomToUserLocation()
+        
+        activityIndicator.startAnimating()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -44,9 +49,19 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         mapView.zoomToUserLocation()
     }
     
+    @IBAction func searchHereButtonPressed(_ sender: Any) {
+
+        let mapViewCoordinate = mapView.centerCoordinate
+        self.showNearbyMarkers(latitude: mapViewCoordinate.latitude, longitude: mapViewCoordinate.longitude)
+    }
     @objc func showNearbyMarkers(latitude: Double, longitude: Double) {
         print("coordinate user latitude", latitude)
         print("coordinate user longitude", longitude)
+        
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        searchHereButton.isHidden = true
+        
 //         Find geosites within 500, the geohash method is not very precise, so having a larger search area is needed
         let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         let radiusInKilometers: Double = 500
@@ -64,7 +79,8 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
                 .start(at: [bound.startValue])
                 .end(at: [bound.endValue])
         }
-
+        
+        
         var matchingDocs = [QueryDocumentSnapshot]()
         // Collect all the query results together into a single list
         func getDocumentsCompletion(snapshot: QuerySnapshot?, error: Error?) -> () {
@@ -86,7 +102,6 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
                      
                     let coordinates = CLLocation(latitude: lat, longitude: lng)
                     let centerPoint = CLLocation(latitude: center.latitude, longitude: center.longitude)
-                    
                     // We have to filter out a few false positives due to GeoHash accuracy, but
                     // most will match
                     let distance = GFUtils.distance(from: centerPoint, to: coordinates)
@@ -101,17 +116,17 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
                             creatorId: creatorId
                         )
                         mapView.addAnnotation(newAnnotation)
-                        
                     }
                     print("matchingDocs post", matchingDocs)
                 }
             }
         }
-        // After all callbacks have executed, matchingDocs contains the result. Note that this
-        // sample does not demonstrate how to wait on all callbacks to complete.
         for query in queries {
             query.getDocuments(completion: getDocumentsCompletion)
         }
+        self.activityIndicator.stopAnimating()
+        self.activityIndicator.isHidden = true
+        searchHereButton.isHidden = false
     }
     
     @objc func renderNavigationBarItems() {

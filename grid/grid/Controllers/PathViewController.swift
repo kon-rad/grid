@@ -16,12 +16,14 @@ class PathViewController: UIViewController {
     @IBOutlet weak var enterARPathButton: UIButton!
     @IBOutlet weak var notCreatedLabel: UILabel!
     @IBOutlet weak var editButton: UIButton!
+    @IBOutlet weak var deleteButton: UIButton!
     
     var path: Path? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         updateData()
+        conditionallyDisplayEditButton()
     }
     
     func updateData() {
@@ -36,13 +38,13 @@ class PathViewController: UIViewController {
     
     func  conditionallyDisplayEditButton() {
         let currentUserId = Auth.auth().currentUser?.uid
-        //        guard let currentUserId = Auth.auth().currentUser.uid? else { return }
         print("current user id", currentUserId!)
         if (currentUserId == path?.creatorId) {
             print("current user is author")
             // may need to do some logic
         } else {
             self.editButton.isHidden = true;
+            self.deleteButton.isHidden = true;
         }
     }
     
@@ -50,7 +52,6 @@ class PathViewController: UIViewController {
         print("touch enter ar path")
         let ARPathCreatorVC = self.storyboard?.instantiateViewController(withIdentifier: "ARPathCreatorVC") as! ARPathCreatorViewController
         ARPathCreatorVC.modalPresentationStyle = .fullScreen
-//        ARPathCreatorVC.delegate = self
         // TODO: enable edit mode?
         ARPathCreatorVC.pathId = self.path?.pathId
         ARPathCreatorVC.isCreatingPath = false
@@ -65,6 +66,20 @@ class PathViewController: UIViewController {
         AddPathVC.delegate = self
         
         self.present(AddPathVC, animated: true, completion: nil)
+    }
+    @IBAction func onTouchDelete(_ sender: Any) {
+        let db = Firestore.firestore()
+        guard ((self.path?.pathId) != nil) else { return }
+        db.collection("paths").whereField("pathId", isEqualTo: self.path?.pathId ?? "").getDocuments() { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting document prior to delete: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    document.reference.delete()
+                }
+            }
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     @IBAction func onTouchBackButton(_ sender: Any) {
         print("AddPathVC cancel pressed")

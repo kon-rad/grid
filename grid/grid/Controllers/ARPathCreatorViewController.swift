@@ -17,6 +17,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     @IBOutlet weak var sessionInfoLabel: UILabel!
     @IBOutlet weak var sceneView: ARSCNView!
     @IBOutlet weak var saveExperienceButton: UIButton!
+    @IBOutlet weak var takeImageButton: RoundedButton!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var snapshotThumbnail: UIImageView!
     
@@ -38,6 +39,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         if !isCreatingPath {
             self.loadExperience()
             self.saveExperienceButton.isHidden = true
+            self.takeImageButton.isHidden = true
         }
         
         self.hideKeyboardWhenTappedAround()
@@ -299,8 +301,12 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         case (.normal, .mapped),
              (.normal, .extending):
             if frame.anchors.contains(where: { $0.name == virtualObjectAnchorName }) {
-                // User has placed an object in scene and the session is mapped, prompt them to save the experience
-                message = "Tap 'Save Experience' to save the current map."
+                if (!self.isCreatingPath) {
+                    message = "Follow the sphere's to the destination"
+                } else {
+                    // User has placed an object in scene and the session is mapped, prompt them to save the experience
+                    message = "Tap 'Save Experience' to save the current map."
+                }
             } else {
                 message = "Tap on the screen to place an object."
             }
