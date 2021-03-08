@@ -25,6 +25,7 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        nameTextField.returnKeyType = UIReturnKeyType.done
         
         Auth.auth().addStateDidChangeListener { auth, user in
             guard let user = user else {

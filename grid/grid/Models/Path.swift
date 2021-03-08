@@ -17,8 +17,11 @@ struct Path {
     var pathId: String
     var documentID: String
     var worldMapDownloadURL: String
+    var startImageDownloadURL: String
+    var endImageDownloadURL: String
     
-    init(name: String, description: String, geoSiteId: String, creatorEmail: String, creatorId: String, pathId: String, documentID: String, worldMapDownloadURL: String) {
+    init(name: String, description: String, geoSiteId: String, creatorEmail: String, creatorId: String, pathId: String, documentID: String, worldMapDownloadURL: String, startImageDownloadURL: String,
+         endImageDownloadURL: String) {
         self.name = name
         self.description = description
         self.geoSiteId = geoSiteId
@@ -27,6 +30,8 @@ struct Path {
         self.pathId = pathId
         self.documentID = documentID
         self.worldMapDownloadURL = worldMapDownloadURL
+        self.startImageDownloadURL = startImageDownloadURL
+        self.endImageDownloadURL = endImageDownloadURL
     }
     
 }

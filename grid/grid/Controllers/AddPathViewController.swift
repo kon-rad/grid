@@ -13,7 +13,9 @@ class AddPathViewController: UIViewController {
 
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextField!
-    @IBOutlet weak var snapshotImageRefrence: UIImageView!
+    @IBOutlet weak var startImageRef: UIImageView!
+    @IBOutlet weak var endImageRef: UIImageView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var geoSiteId: String = ""
     var isEdit: Bool = false
@@ -23,8 +25,11 @@ class AddPathViewController: UIViewController {
     var pathId: String?
     var worldMapData: Data?
     var downloadURL: String?
+    var startImageDownloadURL: String?
+    var endImageDownloadURL: String?
     var pathStartSnapshot: UIImage?
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    var startImageData: Data?
+    var endImageData: Data?
     
     var delegate: AddPathViewControllerDelegate?
     
@@ -32,6 +37,8 @@ class AddPathViewController: UIViewController {
         super.viewDidLoad()
         print("add path VC loaded")
         activityIndicator.isHidden = true
+        nameTextField.returnKeyType = UIReturnKeyType.done
+        descriptionTextField.returnKeyType = UIReturnKeyType.done
         renderEditView()
         if (!self.isEdit) {
             self.pathId = NSUUID().uuidString
@@ -65,10 +72,18 @@ class AddPathViewController: UIViewController {
         
         if (self.worldMapData != nil) {
             self.uploadMapData() {
-                self.savePath()
+                self.uploadStartImage() {
+                    self.uploadEndImage() {
+                        self.savePath()
+                    }
+                }
             }
         } else {
-            self.savePath()
+            self.uploadStartImage() {
+                self.uploadEndImage() {
+                    self.savePath()
+                }
+            }
         }
     }
     
@@ -101,7 +116,9 @@ class AddPathViewController: UIViewController {
             "creatorEmail": creatorEmail!,
             "creatorId": creatorId!,
             "geoSiteId": self.geoSiteId,
-            "worldMapDownloadURL": self.downloadURL ?? ""
+            "worldMapDownloadURL": self.downloadURL ?? "",
+            "startImageDownloadURL": self.startImageDownloadURL ?? "",
+            "endImageDownloadURL": self.endImageDownloadURL ?? ""
         ]) { err in
             if let err = err {
                 print("Error adding document: \(err)")
@@ -113,6 +130,71 @@ class AddPathViewController: UIViewController {
         
         activityIndicator.stopAnimating()
         delegate?.completedSaveOrUpdate()
+    }
+    
+    func uploadStartImage(completion: @escaping () -> Void) {
+        
+        let storage = Storage.storage()
+
+        // Create a storage reference from our storage service
+        let storageRef = storage.reference()
+        let pathStartImageRef = storageRef.child("pathStartImage/\(self.pathId ?? "")")
+        guard (self.startImageData != nil) else { completion(); return }
+        
+        // Upload the data to the path "worldMaps/pathId"
+        pathStartImageRef.putData(self.startImageData!, metadata: nil) { (metadata, error) in
+          guard let metadata = metadata else {
+            // Uh-oh, an error occurred!
+            print("Eror uploading start image data, error:", error ?? " error not available")
+            completion()
+            return
+          }
+          let size = metadata.size
+          print("start imageupload size: ", size)
+            pathStartImageRef.downloadURL { (url, error) in
+            guard let startImageDownloadURL = url else {
+                print("downloadURL not available")
+              // Uh-oh, an error occurred!
+                completion()
+              return
+            }
+            print("upload complete!!! *** download URL is ", startImageDownloadURL)
+            self.startImageDownloadURL = startImageDownloadURL.absoluteString
+            completion()
+          }
+        }
+    }
+    
+    func uploadEndImage(completion: @escaping () -> Void) {
+        
+        let storage = Storage.storage()
+
+        // Create a storage reference from our storage service
+        let storageRef = storage.reference()
+        let pathEndImageRef = storageRef.child("pathEndImage/\(self.pathId ?? "")")
+        
+        // Upload the data to the path "worldMaps/pathId"
+        pathEndImageRef.putData(self.endImageData!, metadata: nil) { (metadata, error) in
+          guard let metadata = metadata else {
+            // Uh-oh, an error occurred!
+            print("Eror uploading end image data, error:", error ?? " error not available")
+            completion()
+            return
+          }
+          let size = metadata.size
+          print("end imageupload size: ", size)
+            pathEndImageRef.downloadURL { (url, error) in
+            guard let endImageDownloadURL = url else {
+                print("downloadURL not available")
+              // Uh-oh, an error occurred!
+                completion()
+              return
+            }
+            print("upload complete!!! *** download URL is ", endImageDownloadURL)
+            self.endImageDownloadURL = endImageDownloadURL.absoluteString
+            completion()
+          }
+        }
     }
     
     func updatePath() {
@@ -141,7 +223,6 @@ class AddPathViewController: UIViewController {
             completion()
             return
         }
-        // TODO: add saving progress indicator
         // TODO: delete existing world map if updating
         
         // Get a reference to the storage service using the default Firebase App
@@ -194,9 +275,13 @@ protocol AddPathViewControllerDelegate {
 
 extension AddPathViewController: ARPathCreatorViewControllerDelegate {
     
-    func completedARWorldMapCreation(worldMapData: Data) {
+    func completedARWorldMapCreation(worldMapData: Data, startImage: Data, endImage: Data) {
         self.worldMapData = worldMapData
-//        self.pathStartSnapshot = snapshot
+        self.startImageRef.image = UIImage(data: startImage)
+        self.startImageData = startImage
+        
+        self.endImageRef.image = UIImage(data: endImage)
+        self.endImageData = endImage
         print("saved worldmap", self.worldMapData ?? " worldMapData not available")
         dismiss(animated: true, completion: nil)
     }

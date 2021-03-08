@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import FirebaseStorage
 
 class PathViewController: UIViewController {
 
@@ -17,6 +18,11 @@ class PathViewController: UIViewController {
     @IBOutlet weak var notCreatedLabel: UILabel!
     @IBOutlet weak var editButton: UIButton!
     @IBOutlet weak var deleteButton: UIButton!
+    
+    @IBOutlet weak var startImageRef: UIImageView!
+    @IBOutlet weak var startLabelRef: UILabel!
+    @IBOutlet weak var endImageRef: UIImageView!
+    @IBOutlet weak var endLabelRef: UILabel!
     
     var path: Path? = nil
     
@@ -34,8 +40,45 @@ class PathViewController: UIViewController {
         } else {
             self.notCreatedLabel.isHidden = true
         }
+        if (self.path?.startImageDownloadURL != "") {
+            self.downloadStartImage()
+            self.startLabelRef.isHidden = false
+        } else {
+            self.startLabelRef.isHidden = true
+        }
+        if (self.path?.endImageDownloadURL != "") {
+            self.downloadEndImage()
+            self.endLabelRef.isHidden = false
+        } else {
+            self.endLabelRef.isHidden = true
+        }
     }
     
+    func downloadStartImage() {
+        let storage = Storage.storage()
+        let storageRef = storage.reference(withPath: "pathStartImage/\(self.path?.pathId ?? "")")
+        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+        storageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
+          if let error = error {
+            print("Error downloading start image:", error)
+          } else {
+            self.startImageRef.image = UIImage(data: data!)
+          }
+        }
+    }
+    func downloadEndImage() {
+        let storage = Storage.storage()
+        let storageRef = storage.reference(withPath: "pathEndImage/\(self.path?.pathId ?? "")")
+        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+        storageRef.getData(maxSize: 1 * 1024 * 1024) { data, error in
+          if let error = error {
+            print("Error downloading end image:", error)
+          } else {
+            self.endImageRef.image = UIImage(data: data!)
+          }
+        }
+        
+    }
     func  conditionallyDisplayEditButton() {
         let currentUserId = Auth.auth().currentUser?.uid
         print("current user id", currentUserId!)

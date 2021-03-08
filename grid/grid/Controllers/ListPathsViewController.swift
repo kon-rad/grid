@@ -76,6 +76,8 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
                     let creatorId = document.get("creatorId") as! String
                     let documentID = document.documentID
                     let worldMapDownloadURL = document.get("worldMapDownloadURL") ?? ""
+                    let startImageDownloadURL = document.get("startImageDownloadURL") ?? ""
+                    let endImageDownloadURL = document.get("endImageDownloadURL") ?? ""
                     print(name, pathId, description)
                     let path = Path(
                         name: name,
@@ -85,7 +87,9 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
                         creatorId: creatorId,
                         pathId: pathId,
                         documentID: documentID,
-                        worldMapDownloadURL: worldMapDownloadURL as! String
+                        worldMapDownloadURL: worldMapDownloadURL as! String,
+                        startImageDownloadURL: startImageDownloadURL as! String,
+                        endImageDownloadURL: endImageDownloadURL as! String
                     )
                     self.items.append(path)
                     

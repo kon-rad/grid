@@ -15,10 +15,11 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        textFieldLoginEmail.returnKeyType = UIReturnKeyType.done
+        textFieldLoginPassword.returnKeyType = UIReturnKeyType.done
         
         Auth.auth().addStateDidChangeListener() { auth, user in
           if user != nil {
-            print("user is not nil", user?.email)
             self.textFieldLoginEmail.text = nil
             self.textFieldLoginPassword.text = nil
             self.dismiss(animated: true, completion: nil)
@@ -34,7 +35,7 @@ class LoginViewController: UIViewController {
         email.count >= 4,
         password.count >= 6
         else {
-        print("login touched condition not met", textFieldLoginEmail.text, textFieldLoginPassword.text)
+        print("login touched condition not met")
         
           return
       }

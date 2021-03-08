@@ -16,13 +16,17 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     @IBOutlet weak var sessionInfoView: UIView!
     @IBOutlet weak var sessionInfoLabel: UILabel!
     @IBOutlet weak var sceneView: ARSCNView!
-    @IBOutlet weak var saveExperienceButton: UIButton!
+    @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var takeImageButton: RoundedButton!
+    @IBOutlet weak var takeDestinationImageButton: RoundedButton!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var snapshotThumbnail: UIImageView!
+    @IBOutlet weak var succesCheckmar: UIImageView!
     
     var pathId: String?
     var isCreatingPath: Bool = true
+    var startPointSnapshotAnchor: SnapshotAnchor?
+    var destinationSnapshotAnchor: SnapshotAnchor?
     
     var delegate: ARPathCreatorViewControllerDelegate?
     
@@ -35,11 +39,13 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        succesCheckmar.isHidden = true
         
         if !isCreatingPath {
             self.loadExperience()
-            self.saveExperienceButton.isHidden = true
+            self.saveButton.isHidden = true
             self.takeImageButton.isHidden = true
+            self.takeDestinationImageButton.isHidden = true
         }
         
         self.hideKeyboardWhenTappedAround()
@@ -118,10 +124,12 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         // Enable Save button only when the mapping status is good and an object has been placed
         switch frame.worldMappingStatus {
         case .extending, .mapped:
-            saveExperienceButton.isEnabled =
-                virtualObjectAnchor != nil && frame.anchors.contains(virtualObjectAnchor!)
+            saveButton.isEnabled =
+                virtualObjectAnchor != nil
+                    && frame.anchors.contains(virtualObjectAnchor!)
+                    && self.startPointSnapshotAnchor != nil
         default:
-            saveExperienceButton.isEnabled = false
+            saveButton.isEnabled = false
         }
         statusLabel.text = """
         Mapping: \(frame.worldMappingStatus.description)
@@ -192,10 +200,24 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     @IBAction func onStartPointImagePress(_ sender: Any) {
         
     
-    // Add a snapshot image indicating where the map was captured.
-//    guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
-//        else { fatalError("Can't take snapshot") }
-//    map.anchors.append(snapshotAnchor)
+        // Add a snapshot image indicating where the map was captured.
+        guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
+            else { fatalError("Can't take snapshot") }
+        self.startPointSnapshotAnchor = snapshotAnchor
+        self.succesCheckmar.isHidden = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.succesCheckmar.isHidden = true
+        }
+    }
+    @IBAction func onDestinationImagePress(_ sender: Any) {
+        guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
+            else { fatalError("Can't take snapshot") }
+        self.destinationSnapshotAnchor = snapshotAnchor
+        self.succesCheckmar.isHidden = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.succesCheckmar.isHidden = true
+        }
+        
     }
     /// - Tag: GetWorldMap
     @IBAction func saveExperience(_ button: UIButton) {
@@ -205,13 +227,13 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
                 else { self.showAlert(title: "Can't get current world map", message: error!.localizedDescription); return }
             
             // Add a snapshot image indicating where the map was captured.
-            guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
-                else { fatalError("Can't take snapshot") }
-            map.anchors.append(snapshotAnchor)
+//            guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
+//                else { fatalError("Can't take snapshot") }
+            map.anchors.append(self.startPointSnapshotAnchor!)
             
             do {
                 let worldMapData = try NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
-                self.delegate?.completedARWorldMapCreation(worldMapData: worldMapData)
+                self.delegate?.completedARWorldMapCreation(worldMapData: worldMapData, startImage: self.startPointSnapshotAnchor!.imageData, endImage: self.destinationSnapshotAnchor!.imageData)
                 
 //                try data.write(to: self.mapSaveURL, options: [.atomic])
 //                DispatchQueue.main.async {
@@ -238,8 +260,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             if let error = error {
                 print("Error while downloading map data: ", error)
                 fatalError("Error while downloading map data")
-//                    dismiss(animated: true, completion: nil)
-//                    return;
             }
             let worldMap: ARWorldMap = { () -> ARWorldMap in
                 do {
@@ -302,17 +322,17 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
              (.normal, .extending):
             if frame.anchors.contains(where: { $0.name == virtualObjectAnchorName }) {
                 if (!self.isCreatingPath) {
-                    message = "Follow the sphere's to the destination"
+                    message = "Follow the bread crumbs to the destination"
                 } else {
                     // User has placed an object in scene and the session is mapped, prompt them to save the experience
-                    message = "Tap 'Save Experience' to save the current map."
+                    message = "Tap 'Save Path' to save the current path."
                 }
             } else {
-                message = "Tap on the screen to place an object."
+                message = "Tap on the screen to place an bread crumb."
             }
             
         case (.normal, _) where mapDataFromFile != nil && !isRelocalizingMap:
-            message = "Move around to map the environment or tap 'Load Experience' to load a saved experience."
+            message = "Move around to map the environment."
             
         case (.normal, _) where mapDataFromFile == nil:
             message = "Move around to map the environment."
@@ -384,5 +404,5 @@ extension UIViewController {
 }
 
 protocol ARPathCreatorViewControllerDelegate {
-    func completedARWorldMapCreation(worldMapData: Data)
+    func completedARWorldMapCreation(worldMapData: Data, startImage: Data, endImage: Data)
 }
