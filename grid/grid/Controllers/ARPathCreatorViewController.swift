@@ -128,6 +128,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
                 virtualObjectAnchor != nil
                     && frame.anchors.contains(virtualObjectAnchor!)
                     && self.startPointSnapshotAnchor != nil
+                    && self.destinationSnapshotAnchor != nil
         default:
             saveButton.isEnabled = false
         }
@@ -205,7 +206,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             else { fatalError("Can't take snapshot") }
         self.startPointSnapshotAnchor = snapshotAnchor
         self.succesCheckmar.isHidden = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.succesCheckmar.isHidden = true
         }
     }
@@ -214,7 +215,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             else { fatalError("Can't take snapshot") }
         self.destinationSnapshotAnchor = snapshotAnchor
         self.succesCheckmar.isHidden = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.succesCheckmar.isHidden = true
         }
         
@@ -227,8 +228,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
                 else { self.showAlert(title: "Can't get current world map", message: error!.localizedDescription); return }
             
             // Add a snapshot image indicating where the map was captured.
-//            guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
-//                else { fatalError("Can't take snapshot") }
             map.anchors.append(self.startPointSnapshotAnchor!)
             
             do {

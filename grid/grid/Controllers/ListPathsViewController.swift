@@ -22,6 +22,9 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     var db = Firestore.firestore()
     
     @IBOutlet weak var addPathButton: UIButton!
+    // TODO: implement edit and delete functionality: have to delete all child paths
+    @IBOutlet weak var editPathButton: UIButton!
+    @IBOutlet weak var deleteButton: UIButton!
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var createdByLabel: UILabel!
@@ -35,7 +38,7 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
-        conditionallyDisplayAddButton()
+        conditionallyDisplayButtons()
         displayListOfPaths()
     }
     
@@ -44,7 +47,7 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
         displayListOfPaths()
     }
     
-    func  conditionallyDisplayAddButton() {
+    func  conditionallyDisplayButtons() {
         let currentUserId = Auth.auth().currentUser?.uid
         print("current user id", currentUserId!)
         if (currentUserId == creatorId) {
@@ -52,6 +55,8 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
             // may need to do some logic
         } else {
             self.addPathButton.isHidden = true;
+            self.editPathButton.isHidden = true;
+            self.deleteButton.isHidden = true;
         }
     }
     
@@ -106,6 +111,11 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
         AddPathVC.geoSiteId = self.geoSiteId
         AddPathVC.delegate = self
         self.present(AddPathVC, animated: true, completion: nil)
+    }
+    // TODO: implement edit and delete functionality
+    @IBAction func editButtonTapped(_ sender: Any) {
+    }
+    @IBAction func deleteButtonTapped(_ sender: Any) {
     }
     
     @IBAction func onGoBack(_ sender: Any) {

@@ -92,14 +92,24 @@ class AddPathViewController: UIViewController {
         
         if (self.worldMapData != nil) {
             self.uploadMapData() {
-                self.updatePath()
+                self.uploadStartImage() {
+                    self.uploadEndImage() {
+                        self.updatePath()
+                    }
+                }
             }
         } else {
-            self.updatePath()
+            self.uploadStartImage() {
+                self.uploadEndImage() {
+                    self.updatePath()
+                }
+            }
         }
     }
     
     func savePath() {
+        // TODO: display notification when required fields are empty
+        
         let creatorEmail = Auth.auth().currentUser?.email
         let creatorId = Auth.auth().currentUser?.uid
         guard let name = nameTextField.text else {
@@ -208,7 +218,9 @@ class AddPathViewController: UIViewController {
         pathRef.updateData([
             "name": name,
             "description": description,
-            "worldMapDownloadURL": self.downloadURL ?? ""
+            "worldMapDownloadURL": self.downloadURL ?? "",
+            "startImageDownloadURL": self.startImageDownloadURL ?? "",
+            "endImageDownloadURL": self.endImageDownloadURL ?? ""
         ])
         self.path?.name = name
         self.path?.description = description
