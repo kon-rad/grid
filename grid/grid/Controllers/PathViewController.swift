@@ -106,6 +106,8 @@ class PathViewController: UIViewController {
         AddPathVC.modalPresentationStyle = .fullScreen
         AddPathVC.path = self.path!
         AddPathVC.isEdit = true
+        AddPathVC.startImageFromView = self.startImageRef.image
+        AddPathVC.endImageFromView = self.endImageRef.image
         AddPathVC.delegate = self
         
         self.present(AddPathVC, animated: true, completion: nil)

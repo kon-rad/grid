@@ -27,9 +27,10 @@ class AddPathViewController: UIViewController {
     var downloadURL: String?
     var startImageDownloadURL: String?
     var endImageDownloadURL: String?
-    var pathStartSnapshot: UIImage?
     var startImageData: Data?
     var endImageData: Data?
+    var startImageFromView: UIImage?
+    var endImageFromView: UIImage?
     
     var delegate: AddPathViewControllerDelegate?
     
@@ -44,6 +45,12 @@ class AddPathViewController: UIViewController {
             self.pathId = NSUUID().uuidString
         } else {
             self.pathId = self.path?.pathId
+            if (self.startImageFromView != nil) {
+                self.startImageRef.image = self.startImageFromView
+            }
+            if (self.endImageFromView != nil) {
+                self.endImageRef.image = self.endImageFromView
+            }
         }
     }
     

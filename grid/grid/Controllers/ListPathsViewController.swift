@@ -23,8 +23,8 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     
     @IBOutlet weak var addPathButton: UIButton!
     // TODO: implement edit and delete functionality: have to delete all child paths
-    @IBOutlet weak var editPathButton: UIButton!
-    @IBOutlet weak var deleteButton: UIButton!
+//    @IBOutlet weak var editPathButton: UIButton!
+//    @IBOutlet weak var deleteButton: UIButton!
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var createdByLabel: UILabel!
@@ -54,9 +54,9 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
             print("current user is author")
             // may need to do some logic
         } else {
-            self.addPathButton.isHidden = true;
-            self.editPathButton.isHidden = true;
-            self.deleteButton.isHidden = true;
+//            self.addPathButton.isHidden = true;
+//            self.editPathButton.isHidden = true;
+//            self.deleteButton.isHidden = true;
         }
     }
     
