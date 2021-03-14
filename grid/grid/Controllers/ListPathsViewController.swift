@@ -39,7 +39,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
         self.tableView.dataSource = self
         
         conditionallyDisplayButtons()
-        displayListOfPaths()
     }
     
     override func viewDidAppear(_ animated: Bool) {

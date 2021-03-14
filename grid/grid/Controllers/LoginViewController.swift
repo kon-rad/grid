@@ -27,6 +27,10 @@ class LoginViewController: UIViewController {
         }
     }
     
+    @IBAction func textFieldDoneEditing(sender: UITextField) {
+        sender.resignFirstResponder()
+    }
+    
     // MARK: Actions
     @IBAction func loginDidTouch(_ sender: AnyObject) {
       guard

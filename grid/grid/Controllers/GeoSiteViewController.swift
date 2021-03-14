@@ -41,6 +41,7 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         mapView.zoomToUserLocation()
         
         activityIndicator.startAnimating()
+        UIApplication.shared.beginIgnoringInteractionEvents()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -50,16 +51,17 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     @IBAction func searchHereButtonPressed(_ sender: Any) {
-
         let mapViewCoordinate = mapView.centerCoordinate
         self.showNearbyMarkers(latitude: mapViewCoordinate.latitude, longitude: mapViewCoordinate.longitude)
     }
+    
     @objc func showNearbyMarkers(latitude: Double, longitude: Double) {
         print("coordinate user latitude", latitude)
         print("coordinate user longitude", longitude)
         
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
+        UIApplication.shared.beginIgnoringInteractionEvents()
         searchHereButton.isHidden = true
         
 //         Find geosites within 500, the geohash method is not very precise, so having a larger search area is needed
@@ -126,6 +128,7 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         }
         self.activityIndicator.stopAnimating()
         self.activityIndicator.isHidden = true
+        UIApplication.shared.endIgnoringInteractionEvents()
         searchHereButton.isHidden = false
     }
     
@@ -160,7 +163,6 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     @objc func logInTapped() {
-        
         let loginVC = self.storyboard?.instantiateViewController(withIdentifier: "loginVC") as! LoginViewController
         loginVC.modalPresentationStyle = .fullScreen
         self.present(loginVC, animated: true, completion: nil)
@@ -175,6 +177,7 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         print("center", center)
         print("mUserLocation.coordinate.latitude", mUserLocation.coordinate.latitude)
         print("mUserLocation.coordinate.longitude", mUserLocation.coordinate.longitude)
+        UIApplication.shared.endIgnoringInteractionEvents()
         self.showNearbyMarkers(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
     }
   }

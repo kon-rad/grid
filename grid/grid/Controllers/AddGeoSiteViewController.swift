@@ -43,6 +43,10 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         mapView.zoomToUserLocation()
     }
     
+    @IBAction func textFieldDoneEditing(sender: UITextField) {
+        sender.resignFirstResponder()
+    }
+    
     @IBAction func onCancel(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }

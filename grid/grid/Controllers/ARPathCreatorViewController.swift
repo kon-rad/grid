@@ -231,8 +231,14 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             map.anchors.append(self.startPointSnapshotAnchor!)
             
             do {
-                let worldMapData = try NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
-                self.delegate?.completedARWorldMapCreation(worldMapData: worldMapData, startImage: self.startPointSnapshotAnchor!.imageData, endImage: self.destinationSnapshotAnchor!.imageData)
+                let worldMapData = try NSKeyedArchiver.archivedData(
+                    withRootObject: map, requiringSecureCoding: true
+                )
+                self.delegate?.completedARWorldMapCreation(
+                    worldMapData: worldMapData,
+                    startImage: self.startPointSnapshotAnchor!.imageData,
+                    endImage: self.destinationSnapshotAnchor!.imageData
+                )
                 
 //                try data.write(to: self.mapSaveURL, options: [.atomic])
 //                DispatchQueue.main.async {
@@ -387,19 +393,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         return referenceNode
     }()
     
-}
-
-// Hides keyboard when tapped around
-extension UIViewController {
-    func hideKeyboardWhenTappedAround() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
 }
 
 protocol ARPathCreatorViewControllerDelegate {

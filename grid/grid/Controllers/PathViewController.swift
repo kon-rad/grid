@@ -23,11 +23,15 @@ class PathViewController: UIViewController {
     @IBOutlet weak var startLabelRef: UILabel!
     @IBOutlet weak var endImageRef: UIImageView!
     @IBOutlet weak var endLabelRef: UILabel!
+    @IBOutlet weak var startImageActivityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var endImageActivityIndicator: UIActivityIndicatorView!
     
     var path: Path? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        startImageActivityIndicator.isHidden = true
+        endImageActivityIndicator.isHidden = true
         updateData()
         conditionallyDisplayEditButton()
     }
@@ -41,12 +45,16 @@ class PathViewController: UIViewController {
             self.notCreatedLabel.isHidden = true
         }
         if (self.path?.startImageDownloadURL != "") {
+            self.startImageActivityIndicator.isHidden = false
+            self.startImageActivityIndicator.startAnimating()
             self.downloadStartImage()
             self.startLabelRef.isHidden = false
         } else {
             self.startLabelRef.isHidden = true
         }
         if (self.path?.endImageDownloadURL != "") {
+            self.endImageActivityIndicator.isHidden = false
+            self.endImageActivityIndicator.startAnimating()
             self.downloadEndImage()
             self.endLabelRef.isHidden = false
         } else {
@@ -63,6 +71,8 @@ class PathViewController: UIViewController {
             print("Error downloading start image:", error)
           } else {
             self.startImageRef.image = UIImage(data: data!)
+            self.startImageActivityIndicator.isHidden = true
+            self.startImageActivityIndicator.stopAnimating()
           }
         }
     }
@@ -75,11 +85,13 @@ class PathViewController: UIViewController {
             print("Error downloading end image:", error)
           } else {
             self.endImageRef.image = UIImage(data: data!)
+            self.endImageActivityIndicator.isHidden = true
+            self.endImageActivityIndicator.stopAnimating()
           }
         }
         
     }
-    func  conditionallyDisplayEditButton() {
+    func conditionallyDisplayEditButton() {
         let currentUserId = Auth.auth().currentUser?.uid
         print("current user id", currentUserId!)
         if (currentUserId == path?.creatorId) {
@@ -113,6 +125,20 @@ class PathViewController: UIViewController {
         self.present(AddPathVC, animated: true, completion: nil)
     }
     @IBAction func onTouchDelete(_ sender: Any) {
+        
+        let alert = UIAlertController(title: "Delete Path?", message: "Once deleted, you will not be able to restore it.", preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler:  { action in
+            self.deletePath()
+        }))
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler:  { action in
+            print("Delete of path was cancelled by user.")
+        }))
+
+        self.present(alert, animated: true)
+    }
+    
+    func deletePath() {
         let db = Firestore.firestore()
         guard ((self.path?.pathId) != nil) else { return }
         db.collection("paths").whereField("pathId", isEqualTo: self.path?.pathId ?? "").getDocuments() { (querySnapshot, err) in

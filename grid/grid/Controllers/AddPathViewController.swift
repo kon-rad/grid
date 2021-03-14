@@ -31,6 +31,7 @@ class AddPathViewController: UIViewController {
     var endImageData: Data?
     var startImageFromView: UIImage?
     var endImageFromView: UIImage?
+    var didEditWorldMap: Bool = false
     
     var delegate: AddPathViewControllerDelegate?
     
@@ -54,6 +55,10 @@ class AddPathViewController: UIViewController {
         }
     }
     
+    @IBAction func textFieldDoneEditing(sender: UITextField) {
+        sender.resignFirstResponder()
+    }
+    
     func renderEditView() {
         if (!self.isEdit) {
             return
@@ -67,9 +72,13 @@ class AddPathViewController: UIViewController {
         print("AddPathVC cancel pressed")
         dismiss(animated: true, completion: nil)
     }
-    
+    // user presses 'save' - either on edit or create views
     @IBAction func onSave(_ sender: Any) {
         print("AddPathVC save pressed")
+        if (!areFieldsValid()) {
+            return;
+        }
+        UIApplication.shared.beginIgnoringInteractionEvents()
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
         if (self.isEdit) {
@@ -95,10 +104,17 @@ class AddPathViewController: UIViewController {
     }
     
     func onUpdate() {
+        if (!areFieldsValid()) {
+            return;
+        }
         print("on update, path: ", self.path!)
         
-        if (self.worldMapData != nil) {
-            self.uploadMapData() {
+        if (!didEditWorldMap) {
+            updatePathWithOnlyNameAndDescription()
+            return;
+        }
+        if (worldMapData != nil) {
+            uploadMapData() {
                 self.uploadStartImage() {
                     self.uploadEndImage() {
                         self.updatePath()
@@ -106,12 +122,55 @@ class AddPathViewController: UIViewController {
                 }
             }
         } else {
-            self.uploadStartImage() {
+            uploadStartImage() {
                 self.uploadEndImage() {
                     self.updatePath()
                 }
             }
         }
+    }
+    
+    func areFieldsValid() -> Bool {
+        let title = "Please complete all required fields"
+        var messages: [String] = []
+        
+        
+        if (nameTextField.text == "") {
+            messages.append("Path name")
+        }
+        if (isEdit && didEditWorldMap && worldMapData == nil) {
+            messages.append("AR path")
+        } else if (!isEdit && worldMapData == nil) {
+            messages.append("AR path")
+        }
+        if (startImageData == nil) {
+            if (isEdit) {
+                if (path?.startImageDownloadURL == "" && didEditWorldMap) {
+                    messages.append("Start image")
+                }
+            } else {
+                messages.append("Start image")
+            }
+        }
+        if (endImageData == nil) {
+            if (isEdit) {
+                if (path?.endImageDownloadURL == "" && didEditWorldMap) {
+                    messages.append("End image")
+                }
+            } else {
+                messages.append("End image")
+            }
+        }
+        
+        if (messages.count == 0) {
+            return true
+        }
+        let alert = UIAlertController(title: title, message: messages.joined(separator: "\n"), preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+
+        self.present(alert, animated: true)
+        return false;
     }
     
     func savePath() {
@@ -146,10 +205,17 @@ class AddPathViewController: UIViewController {
         }
         
         activityIndicator.stopAnimating()
+        UIApplication.shared.endIgnoringInteractionEvents()
         delegate?.completedSaveOrUpdate()
     }
     
     func uploadStartImage(completion: @escaping () -> Void) {
+        
+        if (self.startImageData == nil) {
+            print("Start image was not updated")
+            completion()
+            return
+        }
         
         let storage = Storage.storage()
 
@@ -184,6 +250,12 @@ class AddPathViewController: UIViewController {
     
     func uploadEndImage(completion: @escaping () -> Void) {
         
+        if (self.endImageData == nil) {
+            print("End image was not updated")
+            completion()
+            return
+        }
+        
         let storage = Storage.storage()
 
         // Create a storage reference from our storage service
@@ -191,6 +263,7 @@ class AddPathViewController: UIViewController {
         let pathEndImageRef = storageRef.child("pathEndImage/\(self.pathId ?? "")")
         
         // Upload the data to the path "worldMaps/pathId"
+        // todo: fix edit bug when no ar change is made
         pathEndImageRef.putData(self.endImageData!, metadata: nil) { (metadata, error) in
           guard let metadata = metadata else {
             // Uh-oh, an error occurred!
@@ -234,6 +307,27 @@ class AddPathViewController: UIViewController {
         self.path?.worldMapDownloadURL = self.downloadURL ?? ""
         
         activityIndicator.stopAnimating()
+        UIApplication.shared.endIgnoringInteractionEvents()
+        delegate?.completedUpdate(path: self.path!)
+    }
+    
+    func updatePathWithOnlyNameAndDescription() {
+        
+        guard let name = nameTextField.text else {
+            return
+        }
+        let description = descriptionTextField.text ?? ""
+        
+        let pathRef = db.collection("paths").document(self.path!.documentID)
+        pathRef.updateData([
+            "name": name,
+            "description": description,
+        ])
+        self.path?.name = name
+        self.path?.description = description
+        
+        activityIndicator.stopAnimating()
+        UIApplication.shared.endIgnoringInteractionEvents()
         delegate?.completedUpdate(path: self.path!)
     }
     
@@ -302,6 +396,23 @@ extension AddPathViewController: ARPathCreatorViewControllerDelegate {
         self.endImageRef.image = UIImage(data: endImage)
         self.endImageData = endImage
         print("saved worldmap", self.worldMapData ?? " worldMapData not available")
+        
+        if (self.isEdit) {
+            self.didEditWorldMap = true
+        }
         dismiss(animated: true, completion: nil)
+    }
+}
+
+// Hides keyboard when tapped around
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
