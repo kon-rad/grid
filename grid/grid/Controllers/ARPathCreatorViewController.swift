@@ -21,7 +21,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     @IBOutlet weak var takeDestinationImageButton: RoundedButton!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var snapshotThumbnail: UIImageView!
-    @IBOutlet weak var succesCheckmar: UIImageView!
+    @IBOutlet weak var succesCheckmark: UIImageView!
     
     var pathId: String?
     var isCreatingPath: Bool = true
@@ -39,7 +39,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        succesCheckmar.isHidden = true
+        succesCheckmark.isHidden = true
         
         if !isCreatingPath {
             self.loadExperience()
@@ -205,18 +205,18 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
             else { fatalError("Can't take snapshot") }
         self.startPointSnapshotAnchor = snapshotAnchor
-        self.succesCheckmar.isHidden = false
+        self.succesCheckmark.isHidden = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.succesCheckmar.isHidden = true
+            self.succesCheckmark.isHidden = true
         }
     }
     @IBAction func onDestinationImagePress(_ sender: Any) {
         guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
             else { fatalError("Can't take snapshot") }
         self.destinationSnapshotAnchor = snapshotAnchor
-        self.succesCheckmar.isHidden = false
+        self.succesCheckmark.isHidden = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.succesCheckmar.isHidden = true
+            self.succesCheckmark.isHidden = true
         }
         
     }
@@ -260,8 +260,8 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         }
         let storage = Storage.storage()
         let mapRefrence = storage.reference(withPath: "worldMaps/\(self.pathId ?? "")")
-        // 10 MB max
-        mapRefrence.getData(maxSize: 10 * 1024 * 1024) { data, error in
+        // 100 MB max
+        mapRefrence.getData(maxSize: 100 * 1024 * 1024) { data, error in
             if let error = error {
                 print("Error while downloading map data: ", error)
                 fatalError("Error while downloading map data")

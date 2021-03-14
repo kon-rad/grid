@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Bkv-Ce-GyT">
-                                <rect key="frame" x="0.0" y="77" width="414" height="785"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </mapView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MGQ-C9-B24">
@@ -324,7 +324,7 @@
                         <outlet property="sessionInfoView" destination="37h-bD-Iyn" id="e6g-gN-reW"/>
                         <outlet property="snapshotThumbnail" destination="f6U-ce-g4P" id="we1-gb-AkX"/>
                         <outlet property="statusLabel" destination="aD6-EU-VHg" id="XNR-tR-am9"/>
-                        <outlet property="succesCheckmar" destination="nbt-AE-kdv" id="ZxP-vI-e8g"/>
+                        <outlet property="succesCheckmark" destination="nbt-AE-kdv" id="Syd-sJ-2KK"/>
                         <outlet property="takeDestinationImageButton" destination="uaL-8Y-8j1" id="4Bn-II-7wu"/>
                         <outlet property="takeImageButton" destination="eF0-Sy-Tkc" id="N7S-cf-oAc"/>
                     </connections>
