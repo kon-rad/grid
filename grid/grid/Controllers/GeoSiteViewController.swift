@@ -64,7 +64,7 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         UIApplication.shared.beginIgnoringInteractionEvents()
         searchHereButton.isHidden = true
         
-//         Find geosites within 500, the geohash method is not very precise, so having a larger search area is needed
+//      Find geosites within 500km, the geohash method is not very precise, so having a larger search area is needed
         let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         let radiusInKilometers: Double = 500
 

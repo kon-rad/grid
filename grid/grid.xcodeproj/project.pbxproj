@@ -68,6 +68,7 @@
 		FA0032B325E3010600C99247 /* ListPathsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPathsViewController.swift; sourceTree = "<group>"; };
 		FA0032D025E3387A00C99247 /* Path.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 		FA0032D525E3471E00C99247 /* PathCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathCell.swift; sourceTree = "<group>"; };
+		FA084FC525FEF3E1001393DF /* gridDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = gridDebug.entitlements; sourceTree = "<group>"; };
 		FA10ECED25BD1A8200161290 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		FA10ECF625BD214200161290 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		FA10ED0F25BD22C400161290 /* grid.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = grid.entitlements; sourceTree = "<group>"; };
@@ -230,6 +231,7 @@
 		FAF80BC825A170480098463A /* grid */ = {
 			isa = PBXGroup;
 			children = (
+				FA084FC525FEF3E1001393DF /* gridDebug.entitlements */,
 				FA0032C425E3145E00C99247 /* AR */,
 				FA0032C325E3144900C99247 /* UIElements */,
 				FA0032A525E2BF6B00C99247 /* Annotations */,
@@ -691,16 +693,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = grid/grid.entitlements;
+				CODE_SIGN_ENTITLEMENTS = grid/gridDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Z44X3H583V;
+				DEVELOPMENT_TEAM = GA978N825M;
 				INFOPLIST_FILE = grid/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.synducer.grid;
+				PRODUCT_BUNDLE_IDENTIFIER = com.synducer.gridAR;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -715,14 +717,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = grid/grid.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Z44X3H583V;
+				DEVELOPMENT_TEAM = GA978N825M;
 				INFOPLIST_FILE = grid/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.synducer.grid;
+				PRODUCT_BUNDLE_IDENTIFIER = com.synducer.gridAR;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
