@@ -12,9 +12,12 @@ class LoginViewController: UIViewController {
 
     @IBOutlet weak var textFieldLoginEmail: UITextField!
     @IBOutlet weak var textFieldLoginPassword: UITextField!
+    @IBOutlet weak var loginButtonRef: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//        loginButtonRef.layer.cornerRadius = 20
         textFieldLoginEmail.returnKeyType = UIReturnKeyType.done
         textFieldLoginPassword.returnKeyType = UIReturnKeyType.done
         
