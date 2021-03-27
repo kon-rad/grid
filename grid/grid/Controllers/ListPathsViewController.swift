@@ -53,7 +53,7 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
             print("current user is author")
             // may need to do some logic
         } else {
-//            self.addPathButton.isHidden = true;
+            self.addPathButton.isHidden = true;
 //            self.editPathButton.isHidden = true;
 //            self.deleteButton.isHidden = true;
         }

@@ -21,7 +21,7 @@ class RoundedButton: UIButton {
     }
     
     func setup() {
-        backgroundColor = tintColor
+        backgroundColor = UIColor.systemBlue
         layer.cornerRadius = 8
         clipsToBounds = true
         setTitleColor(.white, for: [])
@@ -30,7 +30,7 @@ class RoundedButton: UIButton {
     
     override var isEnabled: Bool {
         didSet {
-            backgroundColor = isEnabled ? tintColor : .gray
+            backgroundColor = isEnabled ? UIColor.systemBlue : .gray
         }
     }
 }

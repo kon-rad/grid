@@ -71,6 +71,11 @@ class PathViewController: UIViewController {
             print("Error downloading start image:", error)
           } else {
             self.startImageRef.image = UIImage(data: data!)
+            self.startImageRef.layer.cornerRadius = 16.0
+            self.startImageRef.layer.masksToBounds = true
+            self.startImageRef.clipsToBounds = true
+            self.startImageRef.layer.borderWidth = 4
+            self.startImageRef.layer.borderColor = UIColor.lightGray.cgColor
             self.startImageActivityIndicator.isHidden = true
             self.startImageActivityIndicator.stopAnimating()
           }
@@ -85,6 +90,11 @@ class PathViewController: UIViewController {
             print("Error downloading end image:", error)
           } else {
             self.endImageRef.image = UIImage(data: data!)
+            self.endImageRef.layer.cornerRadius = 16.0
+            self.endImageRef.layer.masksToBounds = true
+            self.endImageRef.clipsToBounds = true
+            self.endImageRef.layer.borderWidth = 4
+            self.endImageRef.layer.borderColor = UIColor.lightGray.cgColor
             self.endImageActivityIndicator.isHidden = true
             self.endImageActivityIndicator.stopAnimating()
           }

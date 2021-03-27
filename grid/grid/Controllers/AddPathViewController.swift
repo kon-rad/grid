@@ -48,9 +48,19 @@ class AddPathViewController: UIViewController {
             self.pathId = self.path?.pathId
             if (self.startImageFromView != nil) {
                 self.startImageRef.image = self.startImageFromView
+                self.startImageRef.layer.cornerRadius = 16.0
+                self.startImageRef.clipsToBounds = true
+                self.startImageRef.layer.masksToBounds = true
+                self.startImageRef.layer.borderWidth = 4
+                self.startImageRef.layer.borderColor = UIColor.lightGray.cgColor
             }
             if (self.endImageFromView != nil) {
                 self.endImageRef.image = self.endImageFromView
+                self.endImageRef.layer.cornerRadius = 16.0
+                self.endImageRef.layer.masksToBounds = true
+                self.endImageRef.clipsToBounds = true
+                self.endImageRef.layer.borderWidth = 4
+                self.endImageRef.layer.borderColor = UIColor.lightGray.cgColor
             }
         }
     }
@@ -391,9 +401,19 @@ extension AddPathViewController: ARPathCreatorViewControllerDelegate {
     func completedARWorldMapCreation(worldMapData: Data, startImage: Data, endImage: Data) {
         self.worldMapData = worldMapData
         self.startImageRef.image = UIImage(data: startImage)
+        self.startImageRef.layer.cornerRadius = 16.0
+        self.startImageRef.clipsToBounds = true
+        self.startImageRef.layer.masksToBounds = true
+        self.startImageRef.layer.borderWidth = 4
+        self.startImageRef.layer.borderColor = UIColor.lightGray.cgColor
         self.startImageData = startImage
         
         self.endImageRef.image = UIImage(data: endImage)
+        self.endImageRef.layer.cornerRadius = 16.0
+        self.endImageRef.clipsToBounds = true
+        self.endImageRef.layer.masksToBounds = true
+        self.endImageRef.layer.borderWidth = 4
+        self.endImageRef.layer.borderColor = UIColor.lightGray.cgColor
         self.endImageData = endImage
         print("saved worldmap", self.worldMapData ?? " worldMapData not available")
         
