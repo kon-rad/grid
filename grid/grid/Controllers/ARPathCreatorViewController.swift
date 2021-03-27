@@ -9,6 +9,7 @@ import UIKit
 import SceneKit
 import ARKit
 import FirebaseStorage
+import simd
 
 class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     // MARK: - IBOutlets
@@ -87,15 +88,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     
     // MARK: - ARSCNViewDelegate
     
-    
-    func generateSphereNode() -> SCNNode {
-        let sphere = SCNSphere(radius: 0.05)
-        let sphereNode = SCNNode()
-        sphereNode.position.y += Float(sphere.radius)
-        sphereNode.geometry = sphere
-        return sphereNode
-    }
-    
     func generateArrowNode() -> SCNNode {
         let vertcount = 48;
         let verts: [Float] = [ -1.4923, 1.1824, 2.5000, -6.4923, 0.000, 0.000, -1.4923, -1.1824, 2.5000, 4.6077, -0.5812, 1.6800, 4.6077, -0.5812, -1.6800, 4.6077, 0.5812, -1.6800, 4.6077, 0.5812, 1.6800, -1.4923, -1.1824, -2.5000, -1.4923, 1.1824, -2.5000, -1.4923, 0.4974, -0.9969, -1.4923, 0.4974, 0.9969, -1.4923, -0.4974, 0.9969, -1.4923, -0.4974, -0.9969 ];
@@ -129,7 +121,8 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
 
         let material1 = geometry1.firstMaterial!
 
-        material1.diffuse.contents = UIColor(red: 0.14, green: 0.82, blue: 0.95, alpha: 1.0)
+        // grid color pallete dark blue
+        material1.diffuse.contents = UIColor(red: 0.12, green: 0.13, blue: 0.32, alpha: 1.00)
         material1.lightingModel = .lambert
         material1.transparency = 1.00
         material1.transparencyMode = .dualLayer
@@ -141,8 +134,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         //Assign the SCNGeometry to a SCNNode, for example:
         let aNode = SCNNode()
         aNode.geometry = geometry1
-        aNode.scale = SCNVector3(0.01, 0.01, 0.01)
-        // todo: set rotation to be in front
+        aNode.scale = SCNVector3(0.021, 0.021, 0.021)
         return aNode
     }
     
@@ -157,11 +149,18 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
 //        }
 //        node.addChildNode(virtualObject)
         
-        let sphereNode = generateSphereNode()
-//        let arrowNode = generateArrowNode()
+        let arrowNode = generateArrowNode()
+        // rotate to face camera
+        // get camera angle
+        let yawn = sceneView.session.currentFrame?.camera.eulerAngles.y
+        // set angle to be camera plus -90 (270) degree rotation to point away from viewer
+        arrowNode.eulerAngles = SCNVector3Make(0, Float(degToRadians(degrees: 270)) + Float(yawn ?? 0), 0)
         DispatchQueue.main.async {
-            node.addChildNode(sphereNode)
+            node.addChildNode(arrowNode)
         }
+    }
+    public func degToRadians(degrees:Double) -> Double {
+        return degrees * (Double.pi / 180);
     }
     
     // MARK: - ARSessionDelegate
