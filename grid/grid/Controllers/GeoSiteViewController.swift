@@ -193,7 +193,6 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
     print("Location Manager failed with the following error: \(error)")
   }
-  
 }
 
 // MARK: MapView Delegate
@@ -218,9 +217,9 @@ extension GeoSiteViewController: MKMapViewDelegate {
                 annotation: annotation,
                 reuseIdentifier: identifier)
             view.canShowCallout = true
-            let goButton = UIButton(type: .custom)
-            goButton.frame = CGRect(x: 0, y: 0, width: 23, height: 23)
-            goButton.setImage(UIImage(named: "go_icon"), for: .normal)
+            let goButton = UIButton(type: .system)
+            goButton.frame = CGRect(x: 0, y: 0, width: 50, height: 23)
+            goButton.setTitle("Enter", for: .normal)
             view.rightCalloutAccessoryView = goButton
         }
             

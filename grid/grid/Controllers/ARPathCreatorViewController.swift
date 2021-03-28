@@ -122,7 +122,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         let material1 = geometry1.firstMaterial!
 
         // grid color pallete dark blue
-        material1.diffuse.contents = UIColor(red: 0.12, green: 0.13, blue: 0.32, alpha: 1.00)
+        material1.diffuse.contents = UIColor(red: 0.08, green: 0.61, blue: 0.92, alpha: 1.00)
         material1.lightingModel = .lambert
         material1.transparency = 1.00
         material1.transparencyMode = .dualLayer
@@ -377,13 +377,13 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
              (.normal, .extending):
             if frame.anchors.contains(where: { $0.name == virtualObjectAnchorName }) {
                 if (!self.isCreatingPath) {
-                    message = "Follow the bread crumbs to the destination"
+                    message = "Follow the arrows to the destination"
                 } else {
                     // User has placed an object in scene and the session is mapped, prompt them to save the experience
                     message = "Tap 'Save Path' to save the current path."
                 }
             } else {
-                message = "Tap on the screen to place an bread crumb."
+                message = "Tap on the screen to place an arrow."
             }
             
         case (.normal, _) where mapDataFromFile != nil && !isRelocalizingMap:
