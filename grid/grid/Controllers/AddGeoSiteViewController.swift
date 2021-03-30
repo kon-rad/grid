@@ -57,6 +57,9 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     @IBAction func onSaveTapped(_ sender: Any) {
+        if (!self.validateFields()) {
+            return;
+        }
         let coordinate = mapView.centerCoordinate
         let id = NSUUID().uuidString
         let createdByUser = self.user.email
@@ -93,6 +96,27 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         
         
         dismiss(animated: true, completion: nil)
+    }
+    
+    
+    func validateFields() -> Bool {
+        let title = "Please complete all required fields"
+        var messages: [String] = []
+        
+        
+        if (nameTextField.text == "") {
+            messages.append("GeoSite Name")
+        }
+        
+        if (messages.count == 0) {
+            return true
+        }
+        let alert = UIAlertController(title: title, message: messages.joined(separator: "\n"), preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
+
+        self.present(alert, animated: true)
+        return false;
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

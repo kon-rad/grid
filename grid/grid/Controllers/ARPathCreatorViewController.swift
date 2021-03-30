@@ -140,6 +140,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     
     /// - Tag: RestoreVirtualContent
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        print("didadd", anchor.name)
         guard anchor.name == virtualObjectAnchorName
             else { return }
         
@@ -249,7 +250,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     }
     
     @IBAction func onStartPointImagePress(_ sender: Any) {
-        
     
         // Add a snapshot image indicating where the map was captured.
         guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
@@ -330,6 +330,8 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             if let snapshotData = worldMap.snapshotAnchor?.imageData,
                 let snapshot = UIImage(data: snapshotData) {
                 self.snapshotThumbnail.image = snapshot
+                self.snapshotThumbnail.isHidden = false
+                print("set snapshot", snapshot)
             } else {
                 print("No snapshot image in world map")
             }
@@ -370,8 +372,14 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     private func updateSessionInfoLabel(for frame: ARFrame, trackingState: ARCamera.TrackingState) {
         // Update the UI to provide feedback on the state of the AR experience.
         let message: String
+        print("updateSessionInfoLabel: ", trackingState, frame.worldMappingStatus)
+        print("rame.anchors", frame.anchors)
+        print("mapDataFromFile, isRelocalizingMap", mapDataFromFile, isRelocalizingMap)
+        frame.anchors.forEach { anchor in
+            print("name", anchor.name as Any)
+        }
         
-        snapshotThumbnail.isHidden = true
+//        snapshotThumbnail.isHidden = true
         switch (trackingState, frame.worldMappingStatus) {
         case (.normal, .mapped),
              (.normal, .extending):
@@ -418,14 +426,10 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             .first
             else { return }
         
-        // Remove exisitng anchor and add new anchor
-//        if let existingAnchor = virtualObjectAnchor {
-//            sceneView.session.remove(anchor: existingAnchor)
-//        }
-//        virtualObjectAnchor = ARAnchor(name: virtualObjectAnchorName, transform: hitTestResult.worldTransform)
-//        sceneView.session.add(anchor: virtualObjectAnchor!)
-//
-        
+//        let rotate = simd_float4x4(SCNMatrix4MakeRotation(sceneView.session.currentFrame!.camera.eulerAngles.y, 0, 1, 0))
+//        let rotateTransform = simd_mul(hitTestResult.worldTransform, rotate)
+        print("scene tap: name is ", virtualObjectAnchorName)
+
         virtualObjectAnchor = ARAnchor(name: virtualObjectAnchorName, transform: hitTestResult.worldTransform)
         sceneView.session.add(anchor: virtualObjectAnchor!)
     }
