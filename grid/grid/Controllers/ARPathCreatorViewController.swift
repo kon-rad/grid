@@ -371,41 +371,47 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     
     private func updateSessionInfoLabel(for frame: ARFrame, trackingState: ARCamera.TrackingState) {
         // Update the UI to provide feedback on the state of the AR experience.
-        let message: String
+        var message: String = ""
         print("updateSessionInfoLabel: ", trackingState, frame.worldMappingStatus)
         print("rame.anchors", frame.anchors)
         print("mapDataFromFile, isRelocalizingMap", mapDataFromFile, isRelocalizingMap)
         frame.anchors.forEach { anchor in
-            print("name", anchor.name as Any)
+            print("inside foreach, anchor.name: ", anchor.name as Any)
+            print("inside foreach, anchor: ", anchor as Any)
         }
         
 //        snapshotThumbnail.isHidden = true
         switch (trackingState, frame.worldMappingStatus) {
-        case (.normal, .mapped),
-             (.normal, .extending):
-            if frame.anchors.contains(where: { $0.name == virtualObjectAnchorName }) {
-                if (!self.isCreatingPath) {
-                    message = "Follow the arrows to the destination"
+            case (.normal, .mapped),
+                 (.normal, .extending):
+                if frame.anchors.contains(where: { $0.name == virtualObjectAnchorName }) {
+                    if (!self.isCreatingPath) {
+                        message = "Follow the arrows to the destination"
+                    } else {
+                        // User has placed an object in scene and the session is mapped, prompt them to save the experience
+                        message = "Tap 'Save Path' to save the current path."
+                    }
                 } else {
-                    // User has placed an object in scene and the session is mapped, prompt them to save the experience
-                    message = "Tap 'Save Path' to save the current path."
+                    if (self.isCreatingPath) {
+                        message = "Tap on the screen to place an arrow."
+                    } else {
+                        print("in view mode, trackignState: ", trackingState, frame.worldMappingStatus)
+                        message = "Error: direction arrows not found"
+                    }
                 }
-            } else {
-                message = "Tap on the screen to place an arrow."
-            }
-            
-        case (.normal, _) where mapDataFromFile != nil && !isRelocalizingMap:
-            message = "Move around to map the environment."
-            
-        case (.normal, _) where mapDataFromFile == nil:
-            message = "Move around to map the environment."
-            
-        case (.limited(.relocalizing), _) where isRelocalizingMap:
-            message = "Move your device to the location shown in the image."
-            snapshotThumbnail.isHidden = false
-            
-        default:
-            message = trackingState.localizedFeedback
+                
+            case (.normal, _) where mapDataFromFile != nil && !isRelocalizingMap:
+                message = "Move around to map the environment."
+                
+            case (.normal, _) where mapDataFromFile == nil:
+                message = "Move around to map the environment."
+                
+            case (.limited(.relocalizing), _) where isRelocalizingMap:
+                message = "Move your device to the location shown in the image."
+                snapshotThumbnail.isHidden = false
+                
+            default:
+                message = trackingState.localizedFeedback
         }
         
         sessionInfoLabel.text = message
