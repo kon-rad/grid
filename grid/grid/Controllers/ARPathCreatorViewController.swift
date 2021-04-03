@@ -26,6 +26,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     
     var pathId: String?
     var isCreatingPath: Bool = true
+    var isLoadingData: Bool = true
     var startPointSnapshotAnchor: SnapshotAnchor?
     var destinationSnapshotAnchor: SnapshotAnchor?
     
@@ -153,9 +154,9 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         let arrowNode = generateArrowNode()
         // rotate to face camera
         // get camera angle
-        let yawn = sceneView.session.currentFrame?.camera.eulerAngles.y
+//        let yawn = sceneView.session.currentFrame?.camera.eulerAngles.y
         // set angle to be camera plus -90 (270) degree rotation to point away from viewer
-        arrowNode.eulerAngles = SCNVector3Make(0, Float(degToRadians(degrees: 270)) + Float(yawn ?? 0), 0)
+//        arrowNode.eulerAngles = SCNVector3Make(0, Float(degToRadians(degrees: 270)) + Float(yawn ?? 0), 0)
         DispatchQueue.main.async {
             node.addChildNode(arrowNode)
         }
@@ -167,11 +168,13 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     // MARK: - ARSessionDelegate
     
     func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
+        print("session cameraDidChangeTrackingState")
         updateSessionInfoLabel(for: session.currentFrame!, trackingState: camera.trackingState)
     }
     
     /// - Tag: CheckMappingStatus
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        print("session didUpdate")
         // Enable Save button only when the mapping status is good and an object has been placed
         switch frame.worldMappingStatus {
         case .extending, .mapped:
@@ -289,19 +292,11 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
                     startImage: self.startPointSnapshotAnchor!.imageData,
                     endImage: self.destinationSnapshotAnchor!.imageData
                 )
-                
-//                try data.write(to: self.mapSaveURL, options: [.atomic])
-//                DispatchQueue.main.async {
-//                    self.loadExperienceButton.isHidden = false
-//                    self.loadExperienceButton.isEnabled = true
-//                }
             } catch {
                 fatalError("Can't save map: \(error.localizedDescription)")
             }
         }
         
-        // pass worldmap to path creator view
-//        let data = try NSKeyedArchiver.archivedData(withRootObject: worldMap, requiringSecureCoding: true)
     }
     
     func loadExperience() {
@@ -309,6 +304,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             return
         }
         let storage = Storage.storage()
+        print("-------------- load experience start --------------")
         let mapRefrence = storage.reference(withPath: "worldMaps/\(self.pathId ?? "")")
         // 100 MB max
         mapRefrence.getData(maxSize: 100 * 1024 * 1024) { data, error in
@@ -320,31 +316,42 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
                 do {
                     guard let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data!)
                         else { fatalError("No ARWorldMap in archive.") }
+                    
+                    print("-------------- worldMap unarchived --------------")
                     return worldMap
                 } catch {
                     fatalError("Can't unarchive ARWorldMap from file data: \(error)")
                 }
             }()
             
-            // Display the snapshot image stored in the world map to aid user in relocalizing.
-            if let snapshotData = worldMap.snapshotAnchor?.imageData,
-                let snapshot = UIImage(data: snapshotData) {
-                self.snapshotThumbnail.image = snapshot
-                self.snapshotThumbnail.isHidden = false
-                print("set snapshot", snapshot)
-            } else {
-                print("No snapshot image in world map")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                // delay by 0.5 seconds for cases where user has a high speed internet connection
+                // the session update will have opportunity to run
+                self.setWorldMap(worldMap: worldMap)
             }
-            // Remove the snapshot anchor from the world map since we do not need it in the scene.
-            worldMap.anchors.removeAll(where: { $0 is SnapshotAnchor })
-            
-            let configuration = self.defaultConfiguration // this app's standard world tracking settings
-            configuration.initialWorldMap = worldMap
-            self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-
-            self.isRelocalizingMap = true
-            self.virtualObjectAnchor = nil
         }
+    }
+    
+    func setWorldMap(worldMap: ARWorldMap) {
+        
+        // Display the snapshot image stored in the world map to aid user in relocalizing.
+        if let snapshotData = worldMap.snapshotAnchor?.imageData,
+            let snapshot = UIImage(data: snapshotData) {
+            self.snapshotThumbnail.image = snapshot
+        } else {
+            print("No snapshot image in world map")
+        }
+        // Remove the snapshot anchor from the world map since we do not need it in the scene.
+        worldMap.anchors.removeAll(where: { $0 is SnapshotAnchor })
+        
+        let configuration = self.defaultConfiguration // this app's standard world tracking settings
+        configuration.initialWorldMap = worldMap
+        self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+
+        print("--------------  session run complete - is relocalizing  --------------")
+        self.isRelocalizingMap = true
+        self.virtualObjectAnchor = nil
+        self.isLoadingData = false
     }
     
     // Called opportunistically to verify that map data can be loaded from filesystem.
@@ -373,45 +380,41 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         // Update the UI to provide feedback on the state of the AR experience.
         var message: String = ""
         print("updateSessionInfoLabel: ", trackingState, frame.worldMappingStatus)
-        print("rame.anchors", frame.anchors)
-        print("mapDataFromFile, isRelocalizingMap", mapDataFromFile, isRelocalizingMap)
-        frame.anchors.forEach { anchor in
-            print("inside foreach, anchor.name: ", anchor.name as Any)
-            print("inside foreach, anchor: ", anchor as Any)
-        }
         
-//        snapshotThumbnail.isHidden = true
+        snapshotThumbnail.isHidden = true
         switch (trackingState, frame.worldMappingStatus) {
             case (.normal, .mapped),
                  (.normal, .extending):
                 if frame.anchors.contains(where: { $0.name == virtualObjectAnchorName }) {
-                    if (!self.isCreatingPath) {
+                    if (!isCreatingPath) {
                         message = "Follow the arrows to the destination"
                     } else {
                         // User has placed an object in scene and the session is mapped, prompt them to save the experience
-                        message = "Tap 'Save Path' to save the current path."
+                        message = "Tap 'Save Path' to save the current path"
                     }
                 } else {
-                    if (self.isCreatingPath) {
-                        message = "Tap on the screen to place an arrow."
+                    if (isCreatingPath) {
+                        message = "Tap on the screen to place an arrow"
                     } else {
-                        print("in view mode, trackignState: ", trackingState, frame.worldMappingStatus)
-                        message = "Error: direction arrows not found"
+                        message = "Move around to map the environment"
                     }
                 }
                 
             case (.normal, _) where mapDataFromFile != nil && !isRelocalizingMap:
-                message = "Move around to map the environment."
+                message = "Move around to map the environment"
                 
             case (.normal, _) where mapDataFromFile == nil:
-                message = "Move around to map the environment."
+                message = "Move around to map the environment"
                 
             case (.limited(.relocalizing), _) where isRelocalizingMap:
-                message = "Move your device to the location shown in the image."
+                message = "Move your device to the location shown in the image"
                 snapshotThumbnail.isHidden = false
                 
             default:
                 message = trackingState.localizedFeedback
+        }
+        if (isLoadingData && !isCreatingPath) {
+            message = "Downloading data"
         }
         
         sessionInfoLabel.text = message
@@ -431,12 +434,13 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             .hitTest(sender.location(in: sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
             .first
             else { return }
-        
-//        let rotate = simd_float4x4(SCNMatrix4MakeRotation(sceneView.session.currentFrame!.camera.eulerAngles.y, 0, 1, 0))
-//        let rotateTransform = simd_mul(hitTestResult.worldTransform, rotate)
+        // rotate to be the same direction as the phone and rotate the 3D arrow an additional 90 degrees (- 1.5708 radians)
+        // so that it is not perpendicular, as it's default orientation
+        let rotate = simd_float4x4(SCNMatrix4MakeRotation(sceneView.session.currentFrame!.camera.eulerAngles.y - 1.5708, 0, 1, 0))
+        let rotateTransform = simd_mul(hitTestResult.worldTransform, rotate)
         print("scene tap: name is ", virtualObjectAnchorName)
 
-        virtualObjectAnchor = ARAnchor(name: virtualObjectAnchorName, transform: hitTestResult.worldTransform)
+        virtualObjectAnchor = ARAnchor(name: virtualObjectAnchorName, transform: rotateTransform)
         sceneView.session.add(anchor: virtualObjectAnchor!)
     }
 
