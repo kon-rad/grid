@@ -22,6 +22,8 @@
 		FA2EBEEF25BD113E006EF41C /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2EBEEE25BD113E006EF41C /* Utilities.swift */; };
 		FA319E4625BCD3BF00D943E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */; };
 		FA39B3C326192D530037AF85 /* EditGeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA39B3C226192D530037AF85 /* EditGeoSiteViewController.swift */; };
+		FA39B402261980F40037AF85 /* SearchByAddressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA39B401261980F40037AF85 /* SearchByAddressViewController.swift */; };
+		FA39B40F26198BB20037AF85 /* AddressCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA39B40E26198BB20037AF85 /* AddressCell.swift */; };
 		FA97062625CF7BF3008DBC72 /* AddGeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */; };
 		FA97062B25CF9440008DBC72 /* GeoSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA97062A25CF9440008DBC72 /* GeoSite.swift */; };
 		FABB115925AAC6050087C794 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FABB115725AAC6050087C794 /* Main.storyboard */; };
@@ -78,6 +80,8 @@
 		FA2EBEEE25BD113E006EF41C /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FA39B3C226192D530037AF85 /* EditGeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGeoSiteViewController.swift; sourceTree = "<group>"; };
+		FA39B401261980F40037AF85 /* SearchByAddressViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchByAddressViewController.swift; sourceTree = "<group>"; };
+		FA39B40E26198BB20037AF85 /* AddressCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressCell.swift; sourceTree = "<group>"; };
 		FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGeoSiteViewController.swift; sourceTree = "<group>"; };
 		FA97062A25CF9440008DBC72 /* GeoSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoSite.swift; sourceTree = "<group>"; };
 		FABB115625AAC6050087C794 /* ARPathCreatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARPathCreatorViewController.swift; sourceTree = "<group>"; };
@@ -163,6 +167,7 @@
 			children = (
 				FABB115E25AAC62F0087C794 /* RoundedButton.swift */,
 				FA0032D525E3471E00C99247 /* PathCell.swift */,
+				FA39B40E26198BB20037AF85 /* AddressCell.swift */,
 			);
 			path = UIElements;
 			sourceTree = "<group>";
@@ -196,6 +201,7 @@
 				FA0032B325E3010600C99247 /* ListPathsViewController.swift */,
 				FA15831925EAC66E0086E3A6 /* PathViewController.swift */,
 				FA39B3C226192D530037AF85 /* EditGeoSiteViewController.swift */,
+				FA39B401261980F40037AF85 /* SearchByAddressViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -515,7 +521,9 @@
 				FA0032AA25E2D33D00C99247 /* GeoSiteAnnotation.swift in Sources */,
 				FA0032AF25E300ED00C99247 /* AddPathViewController.swift in Sources */,
 				FA0032D625E3471E00C99247 /* PathCell.swift in Sources */,
+				FA39B402261980F40037AF85 /* SearchByAddressViewController.swift in Sources */,
 				FA2EBECF25BD0F47006EF41C /* GeoSiteViewController.swift in Sources */,
+				FA39B40F26198BB20037AF85 /* AddressCell.swift in Sources */,
 				FA2EBEEF25BD113E006EF41C /* Utilities.swift in Sources */,
 				FABB116025AAC62F0087C794 /* SnapshotAnchor.swift in Sources */,
 				FA10ECEE25BD1A8200161290 /* LoginViewController.swift in Sources */,

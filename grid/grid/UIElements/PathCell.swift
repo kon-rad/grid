@@ -8,9 +8,6 @@
 import UIKit
 
 class PathCell: UITableViewCell {
-    
-    
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
-    
 }

@@ -18,10 +18,12 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var nameTextField: UITextField!
+    @IBOutlet weak var addressRef: UILabel!
     
     var user: User!
     let geoSiteRef = Database.database().reference(withPath: "geo-sites")
     let userRef = Database.database().reference(withPath: "online")
+    var address: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,6 +85,7 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
             "geohash": geohash,
             "latitude": "\(coordinate.latitude)",
             "longitude": "\(coordinate.longitude)",
+            "address": address,
             "id": id,
             "createdByUser": createdByUser,
             "creatorId": creatorId
@@ -98,6 +101,14 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         dismiss(animated: true, completion: nil)
     }
     
+    @IBAction func onSearchByAddress(_ sender: UIButton) {
+        
+        let SearchByAddressVC = self.storyboard?.instantiateViewController(withIdentifier: "SearchByAddressVC") as! SearchByAddressViewController
+        SearchByAddressVC.modalPresentationStyle = .popover
+        SearchByAddressVC.delegate = self
+        
+        self.present(SearchByAddressVC, animated: true, completion: nil)
+    }
     
     func validateFields() -> Bool {
         let title = "Please complete all required fields"
@@ -129,5 +140,25 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
       print("Location Manager failed with the following error: \(error)")
+    }
+}
+
+extension AddGeoSiteViewController: SearchByAddressViewControllerDelegate {
+    func setGeoSiteAddress(address: String) {
+        self.address = address
+        self.addressRef.text = address
+        
+        let geoCoder = CLGeocoder()
+        geoCoder.geocodeAddressString(address) { (placemarks, error) in
+            guard
+                let placemarks = placemarks,
+                let location = placemarks.first?.location
+            else {
+                print("No location found for address: ", address)
+                return
+            }
+            let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 100, longitudinalMeters: 100)
+            self.mapView.setRegion(region, animated: true)
+        }
     }
 }
