@@ -346,7 +346,6 @@ class AddPathViewController: UIViewController {
             completion()
             return
         }
-        // TODO: delete existing world map if updating
         
         // Get a reference to the storage service using the default Firebase App
         let storage = Storage.storage()

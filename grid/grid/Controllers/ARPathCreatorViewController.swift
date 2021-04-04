@@ -141,22 +141,10 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     
     /// - Tag: RestoreVirtualContent
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        print("didadd", anchor.name)
         guard anchor.name == virtualObjectAnchorName
             else { return }
         
-        // save the reference to the virtual object anchor when the anchor is added from relocalizing
-//        if virtualObjectAnchor == nil {
-//            virtualObjectAnchor = anchor
-//        }
-//        node.addChildNode(virtualObject)
-        
         let arrowNode = generateArrowNode()
-        // rotate to face camera
-        // get camera angle
-//        let yawn = sceneView.session.currentFrame?.camera.eulerAngles.y
-        // set angle to be camera plus -90 (270) degree rotation to point away from viewer
-//        arrowNode.eulerAngles = SCNVector3Make(0, Float(degToRadians(degrees: 270)) + Float(yawn ?? 0), 0)
         DispatchQueue.main.async {
             node.addChildNode(arrowNode)
         }

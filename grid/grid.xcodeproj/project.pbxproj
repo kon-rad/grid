@@ -21,6 +21,7 @@
 		FA2EBECF25BD0F47006EF41C /* GeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2EBECE25BD0F47006EF41C /* GeoSiteViewController.swift */; };
 		FA2EBEEF25BD113E006EF41C /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2EBEEE25BD113E006EF41C /* Utilities.swift */; };
 		FA319E4625BCD3BF00D943E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */; };
+		FA39B3C326192D530037AF85 /* EditGeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA39B3C226192D530037AF85 /* EditGeoSiteViewController.swift */; };
 		FA97062625CF7BF3008DBC72 /* AddGeoSiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */; };
 		FA97062B25CF9440008DBC72 /* GeoSite.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA97062A25CF9440008DBC72 /* GeoSite.swift */; };
 		FABB115925AAC6050087C794 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FABB115725AAC6050087C794 /* Main.storyboard */; };
@@ -76,6 +77,7 @@
 		FA2EBECE25BD0F47006EF41C /* GeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoSiteViewController.swift; sourceTree = "<group>"; };
 		FA2EBEEE25BD113E006EF41C /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		FA319E4525BCD3BF00D943E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FA39B3C226192D530037AF85 /* EditGeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditGeoSiteViewController.swift; sourceTree = "<group>"; };
 		FA97062525CF7BF3008DBC72 /* AddGeoSiteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGeoSiteViewController.swift; sourceTree = "<group>"; };
 		FA97062A25CF9440008DBC72 /* GeoSite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoSite.swift; sourceTree = "<group>"; };
 		FABB115625AAC6050087C794 /* ARPathCreatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARPathCreatorViewController.swift; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 				FA0032AE25E300ED00C99247 /* AddPathViewController.swift */,
 				FA0032B325E3010600C99247 /* ListPathsViewController.swift */,
 				FA15831925EAC66E0086E3A6 /* PathViewController.swift */,
+				FA39B3C226192D530037AF85 /* EditGeoSiteViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -521,6 +524,7 @@
 				FA15831A25EAC66E0086E3A6 /* PathViewController.swift in Sources */,
 				FA0032B425E3010600C99247 /* ListPathsViewController.swift in Sources */,
 				FAF80BCA25A170480098463A /* AppDelegate.swift in Sources */,
+				FA39B3C326192D530037AF85 /* EditGeoSiteViewController.swift in Sources */,
 				FABB116225AAC62F0087C794 /* ARUtilities.swift in Sources */,
 				FABB116125AAC62F0087C794 /* RoundedButton.swift in Sources */,
 				FA0032D125E3387A00C99247 /* Path.swift in Sources */,

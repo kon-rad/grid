@@ -48,9 +48,22 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         self.renderNavigationBarItems()
         locationManager.requestLocation()
         mapView.zoomToUserLocation()
+        print("view did appear -------------")
+        searchHere()
     }
     
     @IBAction func searchHereButtonPressed(_ sender: Any) {
+        searchHere()
+    }
+    
+    func removeAllAnnotations() {
+        let annotations = mapView.annotations.filter({ !($0 is MKUserLocation) })
+        mapView.removeAnnotations(annotations)
+    }
+    
+    func searchHere() {
+        print("searching here ------")
+        removeAllAnnotations()
         let mapViewCoordinate = mapView.centerCoordinate
         self.showNearbyMarkers(latitude: mapViewCoordinate.latitude, longitude: mapViewCoordinate.longitude)
     }
@@ -199,8 +212,6 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
 extension GeoSiteViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-
-        print("annotation mapView viewFor method called -------------------------- ", annotation)
         guard !annotation.isKind(of: MKUserLocation.self) else {
             // Make a fast exit if the annotation is the `MKUserLocation`, as it's not an annotation view we wish to customize.
             return nil
@@ -236,6 +247,14 @@ extension GeoSiteViewController: MKMapViewDelegate {
         ListPathsVC.createdByUser = geoSiteAnnotation.createdByUser
         ListPathsVC.geoSiteId = geoSiteAnnotation.geoSiteId
         ListPathsVC.creatorId = geoSiteAnnotation.creatorId
+        ListPathsVC.delegate = self
+        
         self.present(ListPathsVC, animated: true, completion: nil)
+    }
+}
+
+extension GeoSiteViewController: ListPathsViewControllerDelegate {
+    func refreshSearch() {
+        self.searchHere()
     }
 }

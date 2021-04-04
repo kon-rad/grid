@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import FirebaseStorage
 
 class ListPathsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -16,15 +17,15 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     var creatorId: String = ""
     var items: [Path] = []
     let cellIdentifier = "PathCell"
+    var delegate: ListPathsViewControllerDelegate?
     
     @IBOutlet weak var tableView: UITableView!
     
     var db = Firestore.firestore()
     
     @IBOutlet weak var addPathButton: UIButton!
-    // TODO: implement edit and delete functionality: have to delete all child paths
-//    @IBOutlet weak var editPathButton: UIButton!
-//    @IBOutlet weak var deleteButton: UIButton!
+    @IBOutlet weak var editPathButton: UIButton!
+    @IBOutlet weak var deleteButton: UIButton!
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var createdByLabel: UILabel!
@@ -51,11 +52,10 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
         print("current user id", currentUserId!)
         if (currentUserId == creatorId) {
             print("current user is author")
-            // may need to do some logic
         } else {
             self.addPathButton.isHidden = true;
-//            self.editPathButton.isHidden = true;
-//            self.deleteButton.isHidden = true;
+            self.editPathButton.isHidden = true;
+            self.deleteButton.isHidden = true;
         }
     }
     
@@ -111,10 +111,65 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
         AddPathVC.delegate = self
         self.present(AddPathVC, animated: true, completion: nil)
     }
-    // TODO: implement edit and delete functionality
+    
     @IBAction func editButtonTapped(_ sender: Any) {
+        let EditGeoSiteVC = self.storyboard?.instantiateViewController(withIdentifier: "EditGeoSiteVC") as! EditGeoSiteViewController
+        EditGeoSiteVC.modalPresentationStyle = .fullScreen
+        EditGeoSiteVC.name = self.name
+        EditGeoSiteVC.geoSiteId = self.geoSiteId
+        EditGeoSiteVC.delegate = self
+        
+        delegate?.refreshSearch()
+        self.present(EditGeoSiteVC, animated: true, completion: nil)
     }
+    
     @IBAction func deleteButtonTapped(_ sender: Any) {
+        for item in items {
+            print("deleting path with id: ", item.pathId)
+            let storage = Storage.storage()
+            let startImageRef = storage.reference(withPath: "pathStartImage/\(item.pathId )")
+            
+            startImageRef.delete() { error in
+                if let error = error {
+                    print("error deleting start image: ", error)
+                } else {
+                    print("Successfully deleted start image")
+                }
+            }
+            let endImageRef = storage.reference(withPath: "pathEndImage/\(item.pathId )")
+            
+            endImageRef.delete() { error in
+                if let error = error {
+                    print("error deleting end image: ", error)
+                } else {
+                    print("Successfully deleted end image")
+                }
+            }
+            let mapRefrence = storage.reference(withPath: "worldMaps/\(item.pathId)")
+            mapRefrence.delete() { error in
+                if let error = error {
+                    print("error deleting worldMap: ", error)
+                } else {
+                    print("Successfully deleted worldMap")
+                }
+            }
+        }
+        
+        db.collection("geosite")
+            .whereField("id", isEqualTo: self.geoSiteId)
+            .getDocuments() { (querySnapshot, error) in
+                if let error = error {
+                    print("Error occured while deleting geoSite: ", error)
+                } else if querySnapshot!.documents.count != 1 {
+                    print("error while deleting geosite: more than one document found with id: ", self.geoSiteId)
+                } else {
+                    let doc = querySnapshot!.documents.first
+                    doc!.reference.delete()
+                }
+            }
+        
+        delegate?.refreshSearch()
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction func onGoBack(_ sender: Any) {
@@ -170,6 +225,13 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     
 }
 
+extension ListPathsViewController: EditGeoSiteViewControllerDelegate {
+    func completeUpdate(name: String) {
+        titleLabel.text = name
+        self.name = name
+    }
+}
+
 extension ListPathsViewController: AddPathViewControllerDelegate {
     func completedUpdate(path: Path) {
     }
@@ -177,4 +239,8 @@ extension ListPathsViewController: AddPathViewControllerDelegate {
     func completedSaveOrUpdate() {
         dismiss(animated: true, completion: nil)
     }
+}
+
+protocol ListPathsViewControllerDelegate {
+    func refreshSearch()
 }
