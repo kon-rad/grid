@@ -103,7 +103,6 @@ class PathViewController: UIViewController {
     }
     func conditionallyDisplayEditButton() {
         let currentUserId = Auth.auth().currentUser?.uid
-        print("current user id", currentUserId!)
         if (currentUserId == path?.creatorId) {
             print("current user is author")
             // may need to do some logic

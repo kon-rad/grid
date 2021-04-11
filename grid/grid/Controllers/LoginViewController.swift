@@ -12,14 +12,15 @@ class LoginViewController: UIViewController {
 
     @IBOutlet weak var textFieldLoginEmail: UITextField!
     @IBOutlet weak var textFieldLoginPassword: UITextField!
+    @IBOutlet weak var confirmPassowrdRef: UITextField!
     @IBOutlet weak var loginButtonRef: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        loginButtonRef.layer.cornerRadius = 20
         textFieldLoginEmail.returnKeyType = UIReturnKeyType.done
         textFieldLoginPassword.returnKeyType = UIReturnKeyType.done
+        confirmPassowrdRef.isHidden = true
         
         Auth.auth().addStateDidChangeListener() { auth, user in
           if user != nil {
@@ -33,32 +34,78 @@ class LoginViewController: UIViewController {
     @IBAction func textFieldDoneEditing(sender: UITextField) {
         sender.resignFirstResponder()
     }
+    func isValidEmail(_ email: String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+
+        let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailPred.evaluate(with: email)
+    }
+    func validateFields() -> Bool {
+        var messages: [String] = []
+        var isValid = true
+        let isSignUp = !confirmPassowrdRef.isHidden
+        let title = isSignUp ? "Sign up Failed" : "Log in Failed"
+        if textFieldLoginEmail.text == nil {
+            isValid = false
+            messages.append("Email field must not be empty")
+        }
+        if textFieldLoginPassword.text == nil {
+            isValid = false
+            messages.append("Password field must not be empty")
+        }
+        if !isValidEmail(textFieldLoginEmail.text!) {
+            isValid = false
+            messages.append("Email must be valid")
+        }
+        if textFieldLoginPassword.text!.count <= 6 {
+            isValid = false
+            messages.append("Password must be longer than 6 characters")
+        }
+        if isSignUp && textFieldLoginPassword.text != confirmPassowrdRef.text {
+            isValid = false
+            messages.append("Passwords don't match")
+        }
+        
+        if !isValid {
+            let errorMessage = messages.compactMap({ $0 }).joined(separator: "\n")
+            let alert = UIAlertController(
+                title: title,
+                message: errorMessage,
+                preferredStyle: .alert
+            )
+
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+
+            self.present(alert, animated: true, completion: nil)
+        }
+        
+        return isValid
+    }
     
     // MARK: Actions
     @IBAction func loginDidTouch(_ sender: AnyObject) {
-      guard
-        let email = textFieldLoginEmail.text,
-        let password = textFieldLoginPassword.text,
-        email.count >= 4,
-        password.count >= 6
-        else {
-        print("login touched condition not met")
-        
-          return
-      }
-      print("login touched", email, password)
-      
-      Auth.auth().signIn(withEmail: email, password: password) { user, error in
-        if let error = error, user == nil {
-          let alert = UIAlertController(title: "Sign In Failed",
-                                        message: error.localizedDescription,
-                                        preferredStyle: .alert)
-          
-          alert.addAction(UIAlertAction(title: "OK", style: .default))
-          
-          self.present(alert, animated: true, completion: nil)
+        if !validateFields() {
+            return
         }
-      }
+        let email = textFieldLoginEmail.text!
+        let password = textFieldLoginPassword.text!
+        
+
+        Auth.auth().signIn(withEmail: email, password: password) { user, error in
+            if let error = error, user == nil {
+                let alert = UIAlertController(
+                    title: "Sign in Failed",
+                    message: error.localizedDescription,
+                    preferredStyle: .alert
+                )
+
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
     }
     
     @IBAction func backDidTouch(_ sender: Any) {
@@ -66,39 +113,40 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func signUpDidTouch(_ sender: AnyObject) {
-      let alert = UIAlertController(title: "Register",
-                                    message: "Register",
-                                    preferredStyle: .alert)
-      
-      let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
-        
-        let emailField = alert.textFields![0]
-        let passwordField = alert.textFields![1]
-        
-        Auth.auth().createUser(withEmail: emailField.text!, password: passwordField.text!) { user, error in
-          if error == nil {
-            Auth.auth().signIn(withEmail: self.textFieldLoginEmail.text!,
-                               password: self.textFieldLoginPassword.text!)
-          }
+        if !confirmPassowrdRef.isHidden {
+            signUp()
+        } else {
+            confirmPassowrdRef.isHidden = false
         }
-      }
-      
-      let cancelAction = UIAlertAction(title: "Cancel",
-                                       style: .cancel)
-      
-      alert.addTextField { textEmail in
-        textEmail.placeholder = "Enter your email"
-      }
-      
-      alert.addTextField { textPassword in
-        textPassword.isSecureTextEntry = true
-        textPassword.placeholder = "Enter your password"
-      }
-      
-      alert.addAction(saveAction)
-      alert.addAction(cancelAction)
-      
-      present(alert, animated: true, completion: nil)
+    }
+    func showPasswordsDontMatchAlert() {
+            let alert = UIAlertController(
+                title: "Sign Up Failed",
+                message: "Passwords don't match",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alert, animated: true, completion: nil)
+    }
+    @IBAction func didEndSignup(_ sender: UITextField) {
+        signUp()
+    }
+    func signUp() {
+        if !validateFields() {
+            return
+        }
+        Auth.auth().createUser(
+            withEmail: textFieldLoginEmail.text!,
+            password: textFieldLoginPassword.text!
+        ) { user, error in
+            if error == nil {
+                Auth.auth().signIn(
+                    withEmail: self.textFieldLoginEmail.text!,
+                    password: self.textFieldLoginPassword.text!
+                )
+                self.dismiss(animated: true, completion: nil)
+            }
+        }
     }
 }
 

@@ -49,7 +49,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     
     func  conditionallyDisplayButtons() {
         let currentUserId = Auth.auth().currentUser?.uid
-        print("current user id", currentUserId!)
         if (currentUserId == creatorId) {
             print("current user is author")
         } else {

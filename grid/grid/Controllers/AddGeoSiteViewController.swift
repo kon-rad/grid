@@ -116,7 +116,7 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         
         
         if (nameTextField.text == "") {
-            messages.append("GeoSite Name")
+            messages.append("Geo Site Name")
         }
         
         if (messages.count == 0) {
