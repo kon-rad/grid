@@ -49,8 +49,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             self.takeImageButton.isHidden = true
             self.takeDestinationImageButton.isHidden = true
         }
-        
-        self.hideKeyboardWhenTappedAround()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -89,6 +87,23 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     
     // MARK: - ARSCNViewDelegate
     
+    func generateFlatDisk() -> SCNNode {
+        let disk = SCNCylinder(radius: 0.05, height: 0.001);
+        let diskNode = SCNNode()
+        diskNode.position.y += Float(disk.radius)
+        diskNode.geometry = disk
+        disk.firstMaterial?.diffuse.contents = UIColor(red: 0.08, green: 0.61, blue: 0.92, alpha: 1.00)
+        disk.firstMaterial?.lightingModel = .lambert
+        disk.firstMaterial?.transparency = 0.80
+        disk.firstMaterial?.transparencyMode = .dualLayer
+        disk.firstMaterial?.fresnelExponent = 0.80
+        disk.firstMaterial?.reflective.contents = UIColor(white:0.00, alpha:1.0)
+        disk.firstMaterial?.specular.contents = UIColor(white:0.00, alpha:1.0)
+        disk.firstMaterial?.shininess = 0.80
+        return diskNode
+    }
+    // This is not used currently because could not get the arrow to point exactly away from the phone.
+    // Leaving this here in case want to return this feature.
     func generateArrowNode() -> SCNNode {
         let vertcount = 48;
         let verts: [Float] = [ -1.4923, 1.1824, 2.5000, -6.4923, 0.000, 0.000, -1.4923, -1.1824, 2.5000, 4.6077, -0.5812, 1.6800, 4.6077, -0.5812, -1.6800, 4.6077, 0.5812, -1.6800, 4.6077, 0.5812, 1.6800, -1.4923, -1.1824, -2.5000, -1.4923, 1.1824, -2.5000, -1.4923, 0.4974, -0.9969, -1.4923, 0.4974, 0.9969, -1.4923, -0.4974, 0.9969, -1.4923, -0.4974, -0.9969 ];
@@ -144,9 +159,9 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         guard anchor.name == virtualObjectAnchorName
             else { return }
         
-        let arrowNode = generateArrowNode()
+        let flatDisk = generateFlatDisk()
         DispatchQueue.main.async {
-            node.addChildNode(arrowNode)
+            node.addChildNode(flatDisk)
         }
     }
     public func degToRadians(degrees:Double) -> Double {
@@ -156,28 +171,38 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     // MARK: - ARSessionDelegate
     
     func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
-        print("session cameraDidChangeTrackingState")
         updateSessionInfoLabel(for: session.currentFrame!, trackingState: camera.trackingState)
     }
     
     /// - Tag: CheckMappingStatus
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        print("session didUpdate")
         // Enable Save button only when the mapping status is good and an object has been placed
         switch frame.worldMappingStatus {
-        case .extending, .mapped:
-            saveButton.isEnabled =
-                virtualObjectAnchor != nil
-                    && frame.anchors.contains(virtualObjectAnchor!)
-                    && self.startPointSnapshotAnchor != nil
-                    && self.destinationSnapshotAnchor != nil
-        default:
-            saveButton.isEnabled = false
+            case .extending, .mapped:
+                saveButton.isEnabled =
+                    virtualObjectAnchor != nil
+                        && frame.anchors.contains(virtualObjectAnchor!)
+                        && self.startPointSnapshotAnchor != nil
+                        && self.destinationSnapshotAnchor != nil
+            default:
+                saveButton.isEnabled = false
         }
         statusLabel.text = """
-        Mapping: \(frame.worldMappingStatus.description)
-        Tracking: \(frame.camera.trackingState.description)
-        """
+            Mapping: \(frame.worldMappingStatus.description)
+            Tracking: \(frame.camera.trackingState.description)
+            """
+        for anchor in frame.anchors {
+            if (anchor.name == self.virtualObjectAnchorName) {
+                let distance = simd_distance(anchor.transform.columns.3, (sceneView.session.currentFrame?.camera.transform.columns.3)!);
+                let arNode = sceneView.node(for: anchor)
+                // display only disks that are within three meters of the viewer
+                if (distance < 3) {
+                    arNode?.isHidden = false
+                } else {
+                    arNode?.isHidden = true
+                }
+            }
+        }
         updateSessionInfoLabel(for: frame, trackingState: frame.camera.trackingState)
     }
     
@@ -241,7 +266,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     }
     
     @IBAction func onStartPointImagePress(_ sender: Any) {
-    
         // Add a snapshot image indicating where the map was captured.
         guard let snapshotAnchor = SnapshotAnchor(capturing: self.sceneView)
             else { fatalError("Can't take snapshot") }
@@ -321,11 +345,13 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     }
     
     func setWorldMap(worldMap: ARWorldMap) {
-        
         // Display the snapshot image stored in the world map to aid user in relocalizing.
         if let snapshotData = worldMap.snapshotAnchor?.imageData,
             let snapshot = UIImage(data: snapshotData) {
             self.snapshotThumbnail.image = snapshot
+            self.snapshotThumbnail.layer.cornerRadius = 8.0
+            self.snapshotThumbnail.clipsToBounds = true
+            self.snapshotThumbnail.layer.masksToBounds = true
         } else {
             print("No snapshot image in world map")
         }
@@ -355,6 +381,11 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
         configuration.environmentTexturing = .automatic
+        if #available(iOS 13.0, *), ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth)  {
+            configuration.frameSemantics.insert(.personSegmentationWithDepth)
+        } else {
+            print("people occlusion is not supported")
+        }
         return configuration
     }
     
@@ -367,7 +398,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
     private func updateSessionInfoLabel(for frame: ARFrame, trackingState: ARCamera.TrackingState) {
         // Update the UI to provide feedback on the state of the AR experience.
         var message: String = ""
-        print("updateSessionInfoLabel: ", trackingState, frame.worldMappingStatus)
         
         snapshotThumbnail.isHidden = true
         switch (trackingState, frame.worldMappingStatus) {
@@ -375,14 +405,14 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
                  (.normal, .extending):
                 if frame.anchors.contains(where: { $0.name == virtualObjectAnchorName }) {
                     if (!isCreatingPath) {
-                        message = "Follow the arrows to the destination"
+                        message = "Follow the disks to the destination"
                     } else {
                         // User has placed an object in scene and the session is mapped, prompt them to save the experience
                         message = "Tap 'Save Path' to save the current path"
                     }
                 } else {
                     if (isCreatingPath) {
-                        message = "Tap on the screen to place an arrow"
+                        message = "Tap on the screen to place a disk"
                     } else {
                         message = "Move around to map the environment"
                     }
@@ -422,29 +452,19 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             .hitTest(sender.location(in: sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
             .first
             else { return }
+        // 04/10/2021 - no longer doing arrows, rotation is not necessary - changed to disks
         // rotate to be the same direction as the phone and rotate the 3D arrow an additional 90 degrees (- 1.5708 radians)
         // so that it is not perpendicular, as it's default orientation
-        let rotate = simd_float4x4(SCNMatrix4MakeRotation(sceneView.session.currentFrame!.camera.eulerAngles.y - 1.5708, 0, 1, 0))
-        let rotateTransform = simd_mul(hitTestResult.worldTransform, rotate)
-        print("scene tap: name is ", virtualObjectAnchorName)
+//        let rotate = simd_float4x4(SCNMatrix4MakeRotation(sceneView.session.currentFrame!.camera.eulerAngles.y - 1.5708, 0, 1, 0))
+//        let rotateTransform = simd_mul(hitTestResult.worldTransform, rotate)
+//        print("scene tap: name is ", virtualObjectAnchorName)
 
-        virtualObjectAnchor = ARAnchor(name: virtualObjectAnchorName, transform: rotateTransform)
+        virtualObjectAnchor = ARAnchor(name: virtualObjectAnchorName, transform: hitTestResult.worldTransform)
         sceneView.session.add(anchor: virtualObjectAnchor!)
     }
 
     var virtualObjectAnchor: ARAnchor?
     let virtualObjectAnchorName = "virtualObject"
-
-    var virtualObject: SCNNode = {
-        guard let sceneURL = Bundle.main.url(forResource: "cup", withExtension: "scn", subdirectory: "Assets.scnassets/cup"),
-            let referenceNode = SCNReferenceNode(url: sceneURL) else {
-                fatalError("can't load virtual object")
-        }
-        referenceNode.load()
-        
-        return referenceNode
-    }()
-    
 }
 
 protocol ARPathCreatorViewControllerDelegate {

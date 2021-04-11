@@ -21,6 +21,8 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var searchHereButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    var pendingUserLocation: Bool = false
+    
     let geoSiteRef = Database.database().reference(withPath: "geo-sites")
     
     fileprivate let locationManager = CLLocationManager()
@@ -37,17 +39,16 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         mapView.delegate = self;
         mapView.showsUserLocation = true
         searchHereButton.isHidden = true
-        
-        mapView.zoomToUserLocation()
-        
-        activityIndicator.startAnimating()
+        pendingUserLocation = true
+        showActivityIndicator()
         UIApplication.shared.beginIgnoringInteractionEvents()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         self.renderNavigationBarItems()
         locationManager.requestLocation()
-        mapView.zoomToUserLocation()
+//        mapView.zoomToUserLocation()
         print("view did appear -------------")
         searchHere()
     }
@@ -67,13 +68,23 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         let mapViewCoordinate = mapView.centerCoordinate
         self.showNearbyMarkers(latitude: mapViewCoordinate.latitude, longitude: mapViewCoordinate.longitude)
     }
+    func showActivityIndicator() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+    func hideActivityIndicator() {
+        if (activityIndicator.isHidden || self.pendingUserLocation) {
+            return
+        }
+        activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
+    }
     
     @objc func showNearbyMarkers(latitude: Double, longitude: Double) {
         print("coordinate user latitude", latitude)
         print("coordinate user longitude", longitude)
         
-        activityIndicator.isHidden = false
-        activityIndicator.startAnimating()
+        showActivityIndicator()
         UIApplication.shared.beginIgnoringInteractionEvents()
         searchHereButton.isHidden = true
         
@@ -135,12 +146,11 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
                     print("matchingDocs post", matchingDocs)
                 }
             }
+            hideActivityIndicator()
         }
         for query in queries {
             query.getDocuments(completion: getDocumentsCompletion)
         }
-        self.activityIndicator.stopAnimating()
-        self.activityIndicator.isHidden = true
         UIApplication.shared.endIgnoringInteractionEvents()
         searchHereButton.isHidden = false
     }
@@ -150,14 +160,26 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         // conditionally render login button or else Add and Logout buttons
         if Auth.auth().currentUser != nil {
             print("user IS logged in")
+            var navigate: UIBarButtonItem
             let logOut = UIBarButtonItem(title: "Logout", style: UIBarButtonItem.Style.plain, target: self, action: #selector(self.logOutTapped))
             let addSite = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(self.addSiteTapped))
-            self.navigationItem.rightBarButtonItems = [logOut, addSite]
+            if #available(iOS 13.0, *) {
+                navigate = UIBarButtonItem(image: UIImage(systemName: "location.fill"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(self.zoomToLocation))
+                self.navigationItem.rightBarButtonItems = [logOut, addSite, navigate]
+            } else {
+                // Fallback on earlier versions
+                self.navigationItem.rightBarButtonItems = [logOut, addSite]
+            }
+            
         } else {
             print("user not logged in")
             let logIn = UIBarButtonItem(title: "Login/Sign Up", style: UIBarButtonItem.Style.plain, target: self, action: #selector(self.logInTapped))
             self.navigationItem.rightBarButtonItems = [logIn]
         }
+    }
+    
+    @objc func zoomToLocation() {
+        mapView.zoomToUserLocation()
     }
     
     @objc func addSiteTapped() {
@@ -191,7 +213,9 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         print("mUserLocation.coordinate.latitude", mUserLocation.coordinate.latitude)
         print("mUserLocation.coordinate.longitude", mUserLocation.coordinate.longitude)
         UIApplication.shared.endIgnoringInteractionEvents()
-        self.showNearbyMarkers(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
+        pendingUserLocation = false
+        showNearbyMarkers(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
+        mapView.zoomToUserLocation()
     }
   }
     
