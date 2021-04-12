@@ -54,7 +54,6 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     @IBAction func onZoomToLocation(_ sender: Any) {
-        print("on zoom to location")
         mapView.zoomToUserLocation()
     }
     
@@ -75,7 +74,6 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         let location = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
 
         let geohash = GFUtils.geoHash(forLocation: location)
-        print("geohash", geohash)
 
         let db = Firestore.firestore()
         // Add a new document with a generated ID
@@ -88,7 +86,7 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
             "address": address,
             "id": id,
             "createdByUser": createdByUser,
-            "creatorId": creatorId
+            "creatorId": creatorId!
         ]) { err in
             if let err = err {
                 print("Error adding document: \(err)")
@@ -97,13 +95,15 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
             }
         }
         
-        
         dismiss(animated: true, completion: nil)
     }
     
     @IBAction func onSearchByAddress(_ sender: UIButton) {
         
-        let SearchByAddressVC = self.storyboard?.instantiateViewController(withIdentifier: "SearchByAddressVC") as! SearchByAddressViewController
+        let SearchByAddressVC
+            = self.storyboard?.instantiateViewController(
+                withIdentifier: "SearchByAddressVC"
+            ) as! SearchByAddressViewController
         SearchByAddressVC.modalPresentationStyle = .popover
         SearchByAddressVC.delegate = self
         
@@ -113,7 +113,6 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     func validateFields() -> Bool {
         let title = "Please complete all required fields"
         var messages: [String] = []
-        
         
         if (nameTextField.text == "") {
             messages.append("Geo Site Name")

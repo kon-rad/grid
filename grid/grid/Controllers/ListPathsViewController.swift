@@ -32,7 +32,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("ListPathsVC did load, creatorId:", creatorId)
         titleLabel.text = self.name
         createdByLabel.text = "Created by \(self.createdByUser)"
         
@@ -43,7 +42,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        print("viewDidAppear")
         displayListOfPaths()
     }
     
@@ -61,7 +59,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     func displayListOfPaths() {
         self.items.removeAll()
         self.getAllPaths() {
-            print("loaded paths: ", self.items)
             self.tableView.reloadData()
         }
     }
@@ -81,7 +78,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
                     let worldMapDownloadURL = document.get("worldMapDownloadURL") ?? ""
                     let startImageDownloadURL = document.get("startImageDownloadURL") ?? ""
                     let endImageDownloadURL = document.get("endImageDownloadURL") ?? ""
-                    print(name, pathId, description)
                     let path = Path(
                         name: name,
                         description: description,
@@ -103,7 +99,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     @IBAction func onAddPath(_ sender: Any) {
-        print("add path pressed")
         let AddPathVC = self.storyboard?.instantiateViewController(withIdentifier: "AddPathVC") as! AddPathViewController
         AddPathVC.modalPresentationStyle = .fullScreen
         AddPathVC.geoSiteId = self.geoSiteId
@@ -124,7 +119,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     
     @IBAction func deleteButtonTapped(_ sender: Any) {
         for item in items {
-            print("deleting path with id: ", item.pathId)
             let storage = Storage.storage()
             let startImageRef = storage.reference(withPath: "pathStartImage/\(item.pathId )")
             
@@ -172,11 +166,8 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     @IBAction func onGoBack(_ sender: Any) {
-        print("go back pressed")
         dismiss(animated: true, completion: nil)
     }
-    
-    
     
     // MARK: UITableView Delegate methods
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -194,7 +185,6 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        print("canEditRowAt", indexPath)
         return true
     }
     
@@ -210,18 +200,15 @@ class ListPathsViewController: UIViewController, UITableViewDelegate, UITableVie
             guard indexPath.item < self.items.count else {
                 print("index out of range, Index: \(indexPath.item) items.count: \(self.items.count)")
                 return
-                
             }
             
             let PathVC = self.storyboard?.instantiateViewController(withIdentifier: "PathVC") as! PathViewController
             PathVC.modalPresentationStyle = .fullScreen
             PathVC.path = self.items[indexPath.item]
-            print("path clicked: ", self.items[indexPath.item])
             
             self.present(PathVC, animated: true, completion: nil)
         }
     }
-    
 }
 
 extension ListPathsViewController: EditGeoSiteViewControllerDelegate {

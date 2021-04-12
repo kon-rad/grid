@@ -15,7 +15,6 @@ class GeoSiteAnnotation: NSObject, MKAnnotation {
     var geoSiteId: String
     var creatorId: String
     
-    
     var title: String? {
         if name.isEmpty {
         return "Name is Empty"

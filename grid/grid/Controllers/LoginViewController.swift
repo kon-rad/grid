@@ -89,7 +89,6 @@ class LoginViewController: UIViewController {
         }
         let email = textFieldLoginEmail.text!
         let password = textFieldLoginPassword.text!
-        
 
         Auth.auth().signIn(withEmail: email, password: password) { user, error in
             if let error = error, user == nil {

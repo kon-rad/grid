@@ -37,7 +37,6 @@ class AddPathViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("add path VC loaded")
         activityIndicator.isHidden = true
         nameTextField.returnKeyType = UIReturnKeyType.done
         descriptionTextField.returnKeyType = UIReturnKeyType.done
@@ -77,14 +76,12 @@ class AddPathViewController: UIViewController {
         self.descriptionTextField.text = self.path?.description
     }
 
-    
     @IBAction func onCancel(_ sender: Any) {
-        print("AddPathVC cancel pressed")
         dismiss(animated: true, completion: nil)
     }
+    
     // user presses 'save' - either on edit or create views
     @IBAction func onSave(_ sender: Any) {
-        print("AddPathVC save pressed")
         if (!areFieldsValid()) {
             return;
         }
@@ -117,7 +114,6 @@ class AddPathViewController: UIViewController {
         if (!areFieldsValid()) {
             return;
         }
-        print("on update, path: ", self.path!)
         
         if (!didEditWorldMap) {
             updatePathWithOnlyNameAndDescription()
@@ -143,7 +139,6 @@ class AddPathViewController: UIViewController {
     func areFieldsValid() -> Bool {
         let title = "Please complete all required fields"
         var messages: [String] = []
-        
         
         if (nameTextField.text == "") {
             messages.append("Path name")
@@ -184,8 +179,6 @@ class AddPathViewController: UIViewController {
     }
     
     func savePath() {
-        // TODO: display notification when required fields are empty
-        
         let creatorEmail = Auth.auth().currentUser?.email
         let creatorId = Auth.auth().currentUser?.uid
         guard let name = nameTextField.text else {
@@ -237,7 +230,6 @@ class AddPathViewController: UIViewController {
         // Upload the data to the path "worldMaps/pathId"
         pathStartImageRef.putData(self.startImageData!, metadata: nil) { (metadata, error) in
           guard let metadata = metadata else {
-            // Uh-oh, an error occurred!
             print("Eror uploading start image data, error:", error ?? " error not available")
             completion()
             return
@@ -247,11 +239,9 @@ class AddPathViewController: UIViewController {
             pathStartImageRef.downloadURL { (url, error) in
             guard let startImageDownloadURL = url else {
                 print("downloadURL not available")
-              // Uh-oh, an error occurred!
                 completion()
               return
             }
-            print("upload complete!!! *** download URL is ", startImageDownloadURL)
             self.startImageDownloadURL = startImageDownloadURL.absoluteString
             completion()
           }
@@ -276,7 +266,6 @@ class AddPathViewController: UIViewController {
         // todo: fix edit bug when no ar change is made
         pathEndImageRef.putData(self.endImageData!, metadata: nil) { (metadata, error) in
           guard let metadata = metadata else {
-            // Uh-oh, an error occurred!
             print("Eror uploading end image data, error:", error ?? " error not available")
             completion()
             return
@@ -286,7 +275,6 @@ class AddPathViewController: UIViewController {
             pathEndImageRef.downloadURL { (url, error) in
             guard let endImageDownloadURL = url else {
                 print("downloadURL not available")
-              // Uh-oh, an error occurred!
                 completion()
               return
             }
@@ -358,7 +346,6 @@ class AddPathViewController: UIViewController {
         // Upload the data to the path "worldMaps/pathId"
         worldMapRef.putData(self.worldMapData!, metadata: nil) { (metadata, error) in
           guard let metadata = metadata else {
-            // Uh-oh, an error occurred!
             print("Eror uploading worldmap data, error:", error ?? " error not available")
             completion()
             return
@@ -370,11 +357,9 @@ class AddPathViewController: UIViewController {
           worldMapRef.downloadURL { (url, error) in
             guard let downloadURL = url else {
                 print("downloadURL not available")
-              // Uh-oh, an error occurred!
                 completion()
               return
             }
-            print("upload complete!!! *** download URL is ", downloadURL)
             self.downloadURL = downloadURL.absoluteString
             completion()
           }
@@ -382,7 +367,6 @@ class AddPathViewController: UIViewController {
     }
     
     @IBAction func onCreateARPathPressed(_ sender: Any) {
-        print("AddPathVC onCreateARPathPressed")
         let ARPathCreatorVC = self.storyboard?.instantiateViewController(withIdentifier: "ARPathCreatorVC") as! ARPathCreatorViewController
         ARPathCreatorVC.modalPresentationStyle = .fullScreen
         ARPathCreatorVC.delegate = self
@@ -414,7 +398,6 @@ extension AddPathViewController: ARPathCreatorViewControllerDelegate {
         self.endImageRef.layer.borderWidth = 4
         self.endImageRef.layer.borderColor = UIColor.lightGray.cgColor
         self.endImageData = endImage
-        print("saved worldmap", self.worldMapData ?? " worldMapData not available")
         
         if (self.isEdit) {
             self.didEditWorldMap = true

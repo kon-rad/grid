@@ -48,7 +48,10 @@ class SearchByAddressViewController: UIViewController, UITableViewDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: AddressCell = tableView.dequeueReusableCell(withIdentifier: self.cellIdentifier, for: indexPath) as! AddressCell
+        let cell: AddressCell
+            = tableView.dequeueReusableCell(
+                withIdentifier: self.cellIdentifier, for: indexPath
+            ) as! AddressCell
         
         let addressItem = addresses[indexPath.row]
         
@@ -64,7 +67,6 @@ class SearchByAddressViewController: UIViewController, UITableViewDelegate, UITa
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         if tableView.cellForRow(at: indexPath as IndexPath) != nil {
-            
             guard indexPath.item < self.addresses.count else {
                 print("index out of range, Index: \(indexPath.item) items.count: \(self.addresses.count)")
                 return
@@ -75,7 +77,6 @@ class SearchByAddressViewController: UIViewController, UITableViewDelegate, UITa
             self.delegate?.setGeoSiteAddress(address: selectedAddr)
             self.dismiss(animated: true, completion: nil)
         }
-            
     }
 }
 

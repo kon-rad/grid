@@ -69,13 +69,11 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         // Start the view's AR session.
         sceneView.session.delegate = self
         sceneView.session.run(defaultConfiguration)
-        
         sceneView.debugOptions = [ .showFeaturePoints ]
         
         // Prevent the screen from being dimmed after a while as users will likely
         // have long periods of interaction without touching the screen or buttons.
         UIApplication.shared.isIdleTimerDisabled = true
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -163,9 +161,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         DispatchQueue.main.async {
             node.addChildNode(flatDisk)
         }
-    }
-    public func degToRadians(degrees:Double) -> Double {
-        return degrees * (Double.pi / 180);
     }
     
     // MARK: - ARSessionDelegate
@@ -261,6 +256,7 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             fatalError("Can't get file save URL: \(error.localizedDescription)")
         }
     }()
+    
     @IBAction func onBackButtonPress(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
@@ -283,11 +279,10 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.succesCheckmark.isHidden = true
         }
-        
     }
+    
     /// - Tag: GetWorldMap
     @IBAction func saveExperience(_ button: UIButton) {
-        print("save experience pressed")
         sceneView.session.getCurrentWorldMap { worldMap, error in
             guard let map = worldMap
                 else { self.showAlert(title: "Can't get current world map", message: error!.localizedDescription); return }
@@ -316,7 +311,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
             return
         }
         let storage = Storage.storage()
-        print("-------------- load experience start --------------")
         let mapRefrence = storage.reference(withPath: "worldMaps/\(self.pathId ?? "")")
         // 100 MB max
         mapRefrence.getData(maxSize: 100 * 1024 * 1024) { data, error in
@@ -329,7 +323,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
                     guard let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data!)
                         else { fatalError("No ARWorldMap in archive.") }
                     
-                    print("-------------- worldMap unarchived --------------")
                     return worldMap
                 } catch {
                     fatalError("Can't unarchive ARWorldMap from file data: \(error)")
@@ -362,7 +355,6 @@ class ARPathCreatorViewController: UIViewController, ARSCNViewDelegate, ARSessio
         configuration.initialWorldMap = worldMap
         self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
 
-        print("--------------  session run complete - is relocalizing  --------------")
         self.isRelocalizingMap = true
         self.virtualObjectAnchor = nil
         self.isLoadingData = false

@@ -42,14 +42,11 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
         pendingUserLocation = true
         showActivityIndicator()
         UIApplication.shared.beginIgnoringInteractionEvents()
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         self.renderNavigationBarItems()
         locationManager.requestLocation()
-//        mapView.zoomToUserLocation()
-        print("view did appear -------------")
         searchHere()
     }
     
@@ -63,15 +60,16 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func searchHere() {
-        print("searching here ------")
         removeAllAnnotations()
         let mapViewCoordinate = mapView.centerCoordinate
         self.showNearbyMarkers(latitude: mapViewCoordinate.latitude, longitude: mapViewCoordinate.longitude)
     }
+    
     func showActivityIndicator() {
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
+    
     func hideActivityIndicator() {
         if (activityIndicator.isHidden || self.pendingUserLocation) {
             return
@@ -81,8 +79,6 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     @objc func showNearbyMarkers(latitude: Double, longitude: Double) {
-        print("coordinate user latitude", latitude)
-        print("coordinate user longitude", longitude)
         
         showActivityIndicator()
         UIApplication.shared.beginIgnoringInteractionEvents()
@@ -106,7 +102,6 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
                 .end(at: [bound.endValue])
         }
         
-        
         var matchingDocs = [QueryDocumentSnapshot]()
         // Collect all the query results together into a single list
         func getDocumentsCompletion(snapshot: QuerySnapshot?, error: Error?) -> () {
@@ -114,7 +109,6 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
                 print("Unable to fetch snapshot data. \(String(describing: error))")
                 return
             }
-            print("documents", documents)
 
             for document in documents {
                 if (document.data()["latitude"] != nil && document.data()["longitude"] != nil) {
@@ -143,7 +137,6 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
                         )
                         mapView.addAnnotation(newAnnotation)
                     }
-                    print("matchingDocs post", matchingDocs)
                 }
             }
             hideActivityIndicator()
@@ -156,10 +149,8 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     @objc func renderNavigationBarItems() {
-        print("render navigation bar items")
         // conditionally render login button or else Add and Logout buttons
         if Auth.auth().currentUser != nil {
-            print("user IS logged in")
             var navigate: UIBarButtonItem
             let logOut = UIBarButtonItem(title: "Logout", style: UIBarButtonItem.Style.plain, target: self, action: #selector(self.logOutTapped))
             let addSite = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: #selector(self.addSiteTapped))
@@ -172,7 +163,6 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
             }
             
         } else {
-            print("user not logged in")
             let logIn = UIBarButtonItem(title: "Login/Sign Up", style: UIBarButtonItem.Style.plain, target: self, action: #selector(self.logInTapped))
             self.navigationItem.rightBarButtonItems = [logIn]
         }
@@ -204,14 +194,9 @@ class GeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     }
   
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-    if let location = locations.first {
-        print("Found user's location: \(location)")
+    if locations.first != nil {
         let mUserLocation:CLLocation = locations[0] as CLLocation
 
-        let center = CLLocationCoordinate2D(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
-        print("center", center)
-        print("mUserLocation.coordinate.latitude", mUserLocation.coordinate.latitude)
-        print("mUserLocation.coordinate.longitude", mUserLocation.coordinate.longitude)
         UIApplication.shared.endIgnoringInteractionEvents()
         pendingUserLocation = false
         showNearbyMarkers(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
@@ -262,9 +247,7 @@ extension GeoSiteViewController: MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        print("tapped call out")
         let geoSiteAnnotation = view.annotation as! GeoSiteAnnotation
-        print("geoSiteAnnotation: ", geoSiteAnnotation)
         let ListPathsVC = self.storyboard?.instantiateViewController(withIdentifier: "ListPathsVC") as! ListPathsViewController
         ListPathsVC.modalPresentationStyle = .fullScreen
         ListPathsVC.name = geoSiteAnnotation.name

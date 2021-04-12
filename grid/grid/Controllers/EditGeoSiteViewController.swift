@@ -20,7 +20,6 @@ class EditGeoSiteViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.nameTextField.text = name
-        
     }
     
     @IBAction func onSave(_ sender: UIButton) {
@@ -61,7 +60,6 @@ class EditGeoSiteViewController: UIViewController {
     func validateFields() -> Bool {
         let title = "Please complete all required fields"
         var messages: [String] = []
-        
         
         if (nameTextField.text == "") {
             messages.append("GeoSite Name")

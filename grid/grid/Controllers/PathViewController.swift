@@ -105,7 +105,6 @@ class PathViewController: UIViewController {
         let currentUserId = Auth.auth().currentUser?.uid
         if (currentUserId == path?.creatorId) {
             print("current user is author")
-            // may need to do some logic
         } else {
             self.editButton.isHidden = true;
             self.deleteButton.isHidden = true;
@@ -116,15 +115,15 @@ class PathViewController: UIViewController {
         print("touch enter ar path")
         let ARPathCreatorVC = self.storyboard?.instantiateViewController(withIdentifier: "ARPathCreatorVC") as! ARPathCreatorViewController
         ARPathCreatorVC.modalPresentationStyle = .fullScreen
-        // TODO: enable edit mode?
         ARPathCreatorVC.pathId = self.path?.pathId
         ARPathCreatorVC.isCreatingPath = false
         self.present(ARPathCreatorVC, animated: true, completion: nil)
     }
     
     @IBAction func onTouchEdit(_ sender: Any) {
-        print("touch edit")
-        let AddPathVC = self.storyboard?.instantiateViewController(withIdentifier: "AddPathVC") as! AddPathViewController
+        let AddPathVC
+            = self.storyboard?.instantiateViewController(withIdentifier: "AddPathVC")
+                as! AddPathViewController
         AddPathVC.modalPresentationStyle = .fullScreen
         AddPathVC.path = self.path!
         AddPathVC.isEdit = true
@@ -135,8 +134,11 @@ class PathViewController: UIViewController {
         self.present(AddPathVC, animated: true, completion: nil)
     }
     @IBAction func onTouchDelete(_ sender: Any) {
-        
-        let alert = UIAlertController(title: "Delete Path?", message: "Once deleted, you will not be able to restore it.", preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: "Delete Path?",
+            message: "Once deleted, you will not be able to restore it.",
+            preferredStyle: .alert
+        )
 
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler:  { action in
             self.deletePath()
@@ -151,7 +153,9 @@ class PathViewController: UIViewController {
     func deletePath() {
         let db = Firestore.firestore()
         guard ((self.path?.pathId) != nil) else { return }
-        db.collection("paths").whereField("pathId", isEqualTo: self.path?.pathId ?? "").getDocuments() { (querySnapshot, err) in
+        db.collection("paths")
+            .whereField("pathId", isEqualTo: self.path?.pathId ?? "")
+            .getDocuments() { (querySnapshot, err) in
             if let err = err {
                 print("Error getting document prior to delete: \(err)")
             } else {
@@ -162,6 +166,7 @@ class PathViewController: UIViewController {
             self.dismiss(animated: true, completion: nil)
         }
     }
+    
     @IBAction func onTouchBackButton(_ sender: Any) {
         print("AddPathVC cancel pressed")
         dismiss(animated: true, completion: nil)
