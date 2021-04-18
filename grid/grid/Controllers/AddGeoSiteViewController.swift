@@ -19,6 +19,7 @@ class AddGeoSiteViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var addressRef: UILabel!
+    @IBOutlet weak var searchByAddressRef: UIButton!
     
     var user: User!
     let geoSiteRef = Database.database().reference(withPath: "geo-sites")
